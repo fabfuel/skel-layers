@@ -497,7 +497,9 @@ skel.registerPlugin('layers', (function($) {
 							layer.moveToVisibleWrapper();
 						
 						// Animate.
-							window.setTimeout(function() { $le.add($w)._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0); }, 50);
+							window.setTimeout(function() {
+								$le.add($w)._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0);
+							}, 50);
 					
 					},
 					hide: function(layer) {
@@ -558,7 +560,9 @@ skel.registerPlugin('layers', (function($) {
 							layer.moveToVisibleWrapper();
 
 						// Animate.
-							window.setTimeout(function() { $le.add($w)._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcH(_._.useActive(config.height))); }, 50);
+							window.setTimeout(function() {
+								$le.add($w)._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcH(_._.useActive(config.height)));
+							}, 50);
 					
 					},
 					hide: function(layer) {
@@ -619,7 +623,9 @@ skel.registerPlugin('layers', (function($) {
 							layer.moveToVisibleWrapper();
 						
 						// Animate.
-							window.setTimeout(function() { $w._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0); }, 50);
+							window.setTimeout(function() {
+								$w._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0);
+							}, 50);
 					
 					},
 					hide: function(layer) {
@@ -1311,12 +1317,14 @@ skel.registerPlugin('layers', (function($) {
 						});
 
 						if (!_._.vars.isMobile)
-							_.cache.window.on('resize.lock scroll.lock', function(e) {
-						
-								if (_.cache.exclusiveLayer)
-									_.cache.exclusiveLayer.hide();
-						
-							});
+							window.setTimeout(function() {
+								_.cache.window.on('resize.lock scroll.lock', function(e) {
+							
+									if (_.cache.exclusiveLayer)
+										_.cache.exclusiveLayer.hide();
+							
+								});
+							}, _.config.speed + 50);
 
 				},
 				
