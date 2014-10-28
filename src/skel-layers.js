@@ -750,7 +750,8 @@ skel.registerPlugin('layers', (function($) {
 			
 				console.log('[skel-layers] ' + this.id + ': showing');
 			
-				var	config = this.config,
+				var _this = this,
+					config = this.config,
 					animation = _._.useActive(config.animation),
 					$le = this.$element,
 					x;
@@ -770,12 +771,20 @@ skel.registerPlugin('layers', (function($) {
 								&&	!config.hidden)
 									$le.css('height', '-webkit-calc(' + _._.useActive(config.height) + ' + 70px)');
 
-							// Has form inputs? Reset width/height so focusing doesn't break the layer. No idea why this works.
-								if ($le.find('input,select,textarea').length > 0)
-									$le
-										.css('width', $le.css('width'))
-										.css('height', $le.css('height'));
-
+							// iOS 8 (possibly 7) breaks scrolling on fixed elements on blur. This fugly workaround
+							// seems to fix it for the most part.
+								$le.on('blur', 'input,select,textarea', function() {
+									
+									window.setTimeout(function() {
+										_.cache.hiddenWrapper.append(_this.element);
+									
+										window.setTimeout(function() {
+											_.cache.visibleWrapper.append(_this.element);
+										}, 500);
+									}, 500);
+									
+								});
+								
 						}
 					
 				// Set position.
@@ -990,7 +999,7 @@ skel.registerPlugin('layers', (function($) {
 								if (_this.touchPosX === null
 								||	_this.touchPosY === null)
 									return;
-									
+
 								var	diffX = _this.touchPosX - e.originalEvent.touches[0].pageX,
 									diffY = _this.touchPosY - e.originalEvent.touches[0].pageY,
 									th = $le.outerHeight(),
