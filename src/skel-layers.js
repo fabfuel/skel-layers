@@ -387,7 +387,7 @@ skel.registerPlugin('layers', (function($) {
 							$le = layer.$element;
 
 						// Defocus layer element.
-							$le.find('*').blur();
+							$le.find('*').trigger('blur', [true]);
 
 						// Animate.
 							$le._skel_layers_translateOrigin();
@@ -446,7 +446,7 @@ skel.registerPlugin('layers', (function($) {
 							$le = layer.$element;
 
 						// Defocus layer element.
-							$le.find('*').blur();
+							$le.find('*').trigger('blur', [true]);
 
 						// Animate.
 							$le._skel_layers_translateOrigin();
@@ -509,7 +509,7 @@ skel.registerPlugin('layers', (function($) {
 							$w = _.cache.wrapper.add(_.cache.visibleWrapper.children());
 
 						// Defocus layer element.
-							$le.find('*').blur();
+							$le.find('*').trigger('blur', [true]);
 
 						// Animate.
 							$le.add($w)._skel_layers_translateOrigin();
@@ -572,7 +572,7 @@ skel.registerPlugin('layers', (function($) {
 							$w = _.cache.wrapper.add(_.cache.visibleWrapper.children());
 
 						// Defocus layer element.
-							$le.find('*').blur();
+							$le.find('*').trigger('blur', [true]);
 					
 						// Animate.
 							$le.add($w)._skel_layers_translateOrigin();
@@ -635,7 +635,7 @@ skel.registerPlugin('layers', (function($) {
 							$w = _.cache.wrapper.add(_.cache.visibleWrapper.children());
 
 						// Defocus layer element.
-							$le.find('*').blur();
+							$le.find('*').trigger('blur', [true]);
 							
 						// Animate.
 							$w._skel_layers_translateOrigin();
@@ -773,7 +773,10 @@ skel.registerPlugin('layers', (function($) {
 
 							// iOS 8 (possibly 7) breaks scrolling on fixed elements on blur. This fugly workaround
 							// seems to fix it for the most part.
-								$le.on('blur', 'input,select,textarea', function() {
+								$le.on('blur', 'input,select,textarea', function(event, ignore) {
+									
+									if (ignore)
+										return;
 									
 									window.setTimeout(function() {
 										_.cache.hiddenWrapper.append(_this.element);
