@@ -1,5 +1,14 @@
 /* skel-layers.js v1.1.0-dev | (c) n33 | getskel.com | MIT licensed */
 
+/*
+
+	Credits:
+
+        jQuery (jquery.com | (c) 2005, 2014 jQuery Foundation, Inc. and other contributors | MIT license)
+		UMD Wrapper (github.com/umdjs/umd/blob/master/jqueryPlugin.js | @umdjs)
+
+*/
+
 // UMD Wrapper (github.com/umdjs/umd/blob/master/jqueryPlugin.js | @umdjs)
 (function (factory) {
 
