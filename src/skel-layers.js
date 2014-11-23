@@ -1,5 +1,18 @@
 /* skel-layers.js v1.1.0-dev | (c) n33 | getskel.com | MIT licensed */
 
+// UMD Wrapper (github.com/umdjs/umd/blob/master/jqueryPlugin.js | @umdjs)
+(function (factory) {
+
+	// AMD.
+		if (typeof define === 'function' && define.amd)
+			define(['jquery', 'skel'], factory);
+
+	// Browser global.
+		else
+			factory(jQuery, skel);
+
+}(function ($, skel) {
+
 skel.registerPlugin('layers', (function($) {
 
 	// No jQuery? Bail.
@@ -2145,3 +2158,5 @@ skel.registerPlugin('layers', (function($) {
 			return _;
 
 })(jQuery));
+
+}));
