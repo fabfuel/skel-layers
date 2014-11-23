@@ -10,7 +10,7 @@
 */
 
 // UMD Wrapper (github.com/umdjs/umd/blob/master/jqueryPlugin.js | @umdjs)
-(function (factory) {
+(function(factory) {
 
 	// AMD.
 		if (typeof define === 'function' && define.amd)
@@ -20,7 +20,7 @@
 		else
 			factory(jQuery, skel);
 
-}(function ($, skel) {
+}(function($, skel) {
 
 skel.registerPlugin('layers', (function($) {
 
