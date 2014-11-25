@@ -1,4 +1,4 @@
-/* skel-layers.js v1.0.4-dev | (c) n33 | getskel.com | MIT licensed */
+/* skel-layers.js v1.0.4 | (c) n33 | getskel.com | MIT licensed */
 
 /*
 

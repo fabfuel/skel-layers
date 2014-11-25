@@ -9,6 +9,7 @@ A plugin for Skel that simplifies making off-canvas navigation, toolbars, and mo
 ## Credits
 
 * jQuery (http://jquery.com | (c) 2005, 2014 jQuery Foundation, Inc. and other contributors | MIT license)
+* UMD Wrapper (github.com/umdjs/umd/blob/master/jqueryPlugin.js | @umdjs)
 
 ## License
 
