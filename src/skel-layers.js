@@ -1967,6 +1967,22 @@ skel.registerPlugin('layers', (function($) {
 								});
 
 						/**
+						 * Fixes a numeric CSS value.
+						 * @param {string} x Value.
+						 * @return {string,integer} Fixed value.
+						 */
+						$._skel_layers_cssNumericValue = function(x) {
+							
+							// Percentage? Return as-is.
+								if (x && x.slice(-1) == '%')
+									return x;
+
+							// Otherwise, return as an integer.
+								return parseInt(x);
+								
+						};
+
+						/**
 						 * Translates the element back to its point of origin.
 						 * @return {jQuery} Element.
 						 */
@@ -2054,7 +2070,7 @@ skel.registerPlugin('layers', (function($) {
 									var	e = this[i],
 										t = $(e),
 										p;
-									
+										
 									// Calculate and cache origin (if it hasn't been set yet).
 										if (!origins[e.id]) {
 											
@@ -2067,11 +2083,11 @@ skel.registerPlugin('layers', (function($) {
 													
 														case 'center':
 														case 'top':
-															origins[e.id].top = parseInt(t.css('top'));
+															origins[e.id].top = $._skel_layers_cssNumericValue(e.style.top);
 															break;
 															
 														case 'bottom':
-															origins[e.id].bottom = parseInt(t.css('bottom'));
+															origins[e.id].bottom = $._skel_layers_cssNumericValue(e.style.bottom);
 															break;
 														
 													}
@@ -2081,11 +2097,11 @@ skel.registerPlugin('layers', (function($) {
 													
 														case 'center':
 														case 'left':
-															origins[e.id].left = parseInt(t.css('left'));
+															origins[e.id].left = $._skel_layers_cssNumericValue(e.style.left);
 															break;
 															
 														case 'right':
-															origins[e.id].right = parseInt(t.css('right'));
+															origins[e.id].right = $._skel_layers_cssNumericValue(e.style.right);
 															break;
 															
 													}
