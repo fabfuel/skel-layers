@@ -1206,6 +1206,9 @@ skel.registerPlugin('layers', (function($) {
 				// Layers.
 					layers: {},
 
+				// parent.
+					parent: null,
+
 				// window.
 					window: null,
 
@@ -1330,9 +1333,9 @@ skel.registerPlugin('layers', (function($) {
 						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', 'hidden');
 
-					// Lock body height (only when mode != transform).
+					// Lock parent height (only when mode != transform).
 						if (_.config.mode != 'transform')
-							_.cache.body.css('height', _.cache.document.height());
+							_.cache.parent.css('height', _.cache.document.height());
 
 					// Lock events.
 						_.cache.wrapper.on('touchstart.lock click.lock scroll.lock', function(e) {
@@ -1710,9 +1713,9 @@ skel.registerPlugin('layers', (function($) {
 						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', 'visible');
 
-					// Unlock body height (only when mode != transform).
+					// Unlock parent height (only when mode != transform).
 						if (_.config.mode != 'transform')
-							_.cache.body.css('height', '');
+							_.cache.parent.css('height', '');
 
 					// Unlock events.
 						_.cache.wrapper.off('touchstart.lock click.lock scroll.lock');
@@ -1888,31 +1891,33 @@ skel.registerPlugin('layers', (function($) {
 					// html.
 						_.cache.html = $('html');
 
-					// htmlbody
-						_.cache.htmlbody = $('html,body');
-
 					// body.
 						_.cache.body = $('body');
 
-						// Wrap body (only when mode != transform).
-							if (_.config.mode != 'transform') {
+					// htmlbody
+						_.cache.htmlbody = $('html,body');
 
-								_.cache.htmlbody
-									.css('height', '100%');
+					// parent.
+						if (_.config.mode != 'transform') {
 
-								_.cache.body.wrapInner('<div id="skel-layers-body" />');
-								_.cache.body = $('#skel-layers-body');
-								_.cache.body
-									.css('position', 'absolute')
-									.css('left', 0)
-									.css('top', 0)
-									.css('min-height', '100%')
-									.css('width', '100%');
+							_.cache.htmlbody
+								.css('height', '100%');
 
-							}
+							_.cache.body.wrapInner('<div id="skel-layers-parent" />');
+							_.cache.parent = $('#skel-layers-parent');
+							_.cache.parent
+								.css('position', 'absolute')
+								.css('left', 0)
+								.css('top', 0)
+								.css('min-height', '100%')
+								.css('width', '100%');
+
+						}
+						else
+							_.cache.parent = _.cache.body;
 
 					// wrapper.
-						_.cache.body.wrapInner('<div id="skel-layers-wrapper" />');
+						_.cache.parent.wrapInner('<div id="skel-layers-wrapper" />');
 						_.cache.wrapper = $('#skel-layers-wrapper');
 						_.cache.wrapper
 							.css('position', 'relative')
@@ -1923,12 +1928,12 @@ skel.registerPlugin('layers', (function($) {
 							._skel_layers_init();
 
 					// hiddenWrapper.
-						_.cache.hiddenWrapper = $('<div id="skel-layers-hiddenWrapper" />').appendTo(_.cache.body);
+						_.cache.hiddenWrapper = $('<div id="skel-layers-hiddenWrapper" />').appendTo(_.cache.parent);
 						_.cache.hiddenWrapper
 							.css('height', '100%');
 
 					// visibleWrapper.
-						_.cache.visibleWrapper = $('<div id="skel-layers-visibleWrapper" />').appendTo(_.cache.body);
+						_.cache.visibleWrapper = $('<div id="skel-layers-visibleWrapper" />').appendTo(_.cache.parent);
 						_.cache.visibleWrapper
 							.css('position', 'relative');
 
@@ -2119,7 +2124,7 @@ skel.registerPlugin('layers', (function($) {
 												});
 
 											// Reset stuff an animation might've changed.
-												_.cache.body
+												_.cache.parent
 													.css('overflow-x', 'visible');
 												_.cache.wrapper
 													.css('width', 'auto')
@@ -2151,7 +2156,7 @@ skel.registerPlugin('layers', (function($) {
 								// If we're changing X, change some stuff.
 									if (x != 0) {
 
-										_.cache.body
+										_.cache.parent
 											.css('overflow-x', 'hidden');
 
 										// Note: this is what's screwing stuff up on ios when mode != 'transform'
@@ -2164,7 +2169,7 @@ skel.registerPlugin('layers', (function($) {
 
 										fx = function() {
 
-											_.cache.body
+											_.cache.parent
 												.css('overflow-x', 'visible');
 											_.cache.wrapper
 												.css('width', 'auto');
