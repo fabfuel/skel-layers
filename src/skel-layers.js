@@ -1786,6 +1786,9 @@ skel.registerPlugin('layers', (function($) {
 
 										// IE < 10?
 											(_._.vars.IEVersion < 10)
+										||
+										// Unsupported platform?
+											(_._.vars.deviceType == 'wp')
 
 									);
 
