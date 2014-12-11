@@ -1223,17 +1223,14 @@ skel.registerPlugin('layers', (function($) {
 				// Layers.
 					layers: {},
 			
+				// Animation mode ('transform', 'position', 'animate')
+					mode: 'position',
+
 				// Animation speed (in ms).
-					speed: 250,
+					speed: 500,
 				
-				// Determines if we should use CSS transforms for animations (= much faster/smoother than CSS).
-					transform: true,
-				
-				// If defined, a list of breakpoints at which CSS transforms are allowed.
-					transformBreakpoints: null,
-					
-				// If defined (as a function), return value is used to determine whether CSS transforms are to be used.
-					transformTest: null
+				// Animation easing.
+					easing: 'ease'
 				
 			},
 
@@ -1682,7 +1679,7 @@ skel.registerPlugin('layers', (function($) {
 
 					var x;
 
-					if (_.config.transform) {
+					if (_.config.mode == 'transform') {
 						
 						// Move elements with the "skel-layers-fixed" class to visibleWrapper.
 							if (target)
@@ -1752,34 +1749,52 @@ skel.registerPlugin('layers', (function($) {
 									
 								});
 
-						// Perform transform test (if it's been defined).
-							if (_.config.transformTest)
-								_.config.transform = (_.config.transformTest)();
+						// Determine mode.
 
-						// If transforms are enabled, run additional checks.
-							if (_.config.transform) {
+							// (deprecated) transform, transformTest.
+								if (_.config.transform
+								||	_.config.transformTest && _.config.transformTest())
+									_.config.mode = 'transform';
 
-								// Hack: Disable transforms on devices that lack proper support for them.
-									if ((_._.vars.deviceType == 'android' && _._.vars.deviceVersion < 4)
-									||	_._.vars.deviceType == 'wp')
-										_.config.transform = false;
-										
-								// Hack: Disable transforms on IE < 10.
-									if (_._.vars.IEVersion < 10)
-										_.config.transform = false;
+							// Function? Call it.
+								if (typeof _.config.mode == 'function')
+									_.config.mode = (_.config.mode)();
 
-								// Disable transforms if transform breakpoints have been specified but none are active.
-									if (_.config.transformBreakpoints
-									&& !_._.hasActive(_._.getArray(_.config.transformBreakpoints)))
-										_.config.transform = false;
-									
-							}
+							// Temporary kludge!
+								var	canUse_transform = !(
+
+										// Unsupported platform?
+											((_._.vars.deviceType == 'android' && _._.vars.deviceVersion < 4) || _._.vars.deviceType == 'wp')
+										||
+										// IE < 10?
+											(_._.vars.IEVersion < 10)
+										||
+										// (deprecated) Transform breakpoints have been specified but none are active?
+											(_.config.transformBreakpoints && !_._.hasActive(_._.getArray(_.config.transformBreakpoints)))
+
+									),
+									canUse_transition = !(
+
+										// IE < 10?
+											(_._.vars.IEVersion < 10)
+
+									);
+
+							// Can't transform? Fall back on position.
+								if (_.config.mode == 'transform'
+								&&	!canUse_transform)
+									_.config.mode = 'position';
+
+							// Can't position? Fall back on animate.
+								if (_.config.mode == 'position'
+								&&	!canUse_transition)
+									_.config.mode = 'animate';
 
 					// Set window.
 						_.cache.window = $(window);
 
-					// Initialize objects, transforms.
-						_.initTransforms();
+					// Initialize animation, objects.
+						_.initAnimation();
 						_.initObjects();
 					
 					// Final initialization stuff.
@@ -1878,7 +1893,6 @@ skel.registerPlugin('layers', (function($) {
 						_.cache.hiddenWrapper = $('<div id="skel-layers-hiddenWrapper" />').appendTo(_.cache.body);
 						_.cache.hiddenWrapper
 							.css('height', '100%');
-
 						
 					// visibleWrapper.
 						_.cache.visibleWrapper = $('<div id="skel-layers-visibleWrapper" />').appendTo(_.cache.body);
@@ -1898,282 +1912,348 @@ skel.registerPlugin('layers', (function($) {
 				},
 			
 				/**
-				 * Initializes transforms.
+				 * Initializes animation functions.
 				 */
-				initTransforms: function() {
+				initAnimation: function() {
 					
-					if (_.config.transform) {
-					
-						/**
-						 * Translates the element back to its point of origin.
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_translateOrigin = function() {
-							
-							return $(this)._skel_layers_translate(0, 0);
-
-						};				
-
-						/**
-						 * Translates the element to specific coordinates.
-						 * @param {integer} x Position on x-axis.
-						 * @param {integer} y Position on y-axis.
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_translate = function(x, y) {
-							return $(this).css('transform', 'translate(' + x + 'px, ' + y + 'px)');
-						};
-
-						/**
-						 * Initializes the element for animation
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_init = function() {
-							
-							return $(this)
-									.css('backface-visibility', 'hidden')
-									.css('perspective', '500')
-									._skel_layers_xcss('transition', 'transform ' + (_.config.speed / 1000.00) + 's ease-in-out');
+					// Mode: Transform.
+						if (_.config.mode == 'transform') {
 						
-						};
-					
-					}
-					else {
+							/**
+							 * Translates the element back to its point of origin.
+							 * @return {jQuery} Element.
+							 */
+							$.fn._skel_layers_translateOrigin = function() {
+								return $(this)._skel_layers_translate(0, 0);
+							};				
+
+							/**
+							 * Translates the element to specific coordinates.
+							 * @param {integer} x Position on x-axis.
+							 * @param {integer} y Position on y-axis.
+							 * @return {jQuery} Element.
+							 */
+							$.fn._skel_layers_translate = function(x, y) {
+								return $(this).css('transform', 'translate(' + x + 'px, ' + y + 'px)');
+							};
+
+							/**
+							 * Initializes the element for animation
+							 * @return {jQuery} Element.
+							 */
+							$.fn._skel_layers_init = function() {
+								
+								return $(this)
+										.css('backface-visibility', 'hidden')
+										.css('perspective', '500')
+										._skel_layers_xcss('transition', 'transform ' + (_.config.speed / 1000.00) + 's ' + _.config.easing);
+							
+							};
 						
-						var f, origins = [];
+						}
+					
+					// Mode: Position, Animate.
+						else {
+							
+							var f, origins = [];
 
-						// Forced resets.
-							_.cache.window
-								.resize(function() {
+							// Mode: Animate.
+								if (_.config.mode == 'animate') {
 
-									if (_.config.speed != 0) {
-										
-										var t = _.config.speed;
-										
-										_.config.speed = 0;
-										
-										window.setTimeout(function() {
+									// Forced resets.
+										_.cache.window
+											.resize(function() {
+
+												if (_.config.speed != 0) {
+													
+													var t = _.config.speed;
+													
+													_.config.speed = 0;
+													
+													window.setTimeout(function() {
+														
+														// Restore animation speed.
+															_.config.speed = t;
+														
+														// Wipe origins.
+															origins = [];
+													
+													}, t);
+												
+												}
 											
-											// Restore animation speed.
-												_.config.speed = t;
+											});
 											
-											// Wipe origins.
-												origins = [];
-										
-										}, t);
+									// Fix easing.
+										if (_.config.easing.substr(0, 4) == 'ease') {
+											
+										 	_.config.easing = 'swing';
+										 	_.config.speed = (_.config.speed * 0.65);
+										 	
+										}
+										else
+											_.config.easing = 'linear';
+
+									/**
+									 * Performs the actual translation.
+									 * @param {Array} a Properties to translate.
+									 * @param {function} f Callback to call upon completion.
+									 */
+									$.fn._skel_layers_doTranslate = function(a, f) {
+										$(this).animate(a, _.config.speed, _.config.easing, f);
+									};
+
+									/**
+									 * Initializes the element for animation
+									 * @return {jQuery} Element.
+									 */
+									$.fn._skel_layers_init = function() {
+										return $(this).css('position', 'absolute');
+									};
+											
+								}
+							
+							// Mode: Position.
+								else {
 									
+									/**
+									 * Performs the actual translation.
+									 * @param {Array} a Properties to translate.
+									 * @param {function} f Callback to call upon completion.
+									 */
+									$.fn._skel_layers_doTranslate = function(a, f) {
+										
+										var t = $(this);
+										
+										_._.iterate(a, function(k) {
+											t.css(k, a[k]);
+										});
+										
+										window.setTimeout(f, _.config.speed);
+										
+									};
+
+									/**
+									 * Initializes the element for animation
+									 * @return {jQuery} Element.
+									 */
+									$.fn._skel_layers_init = function() {
+							
+										return $(this)
+											.css('transition',	'top ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																						'right ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																						'bottom ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																						'left ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
+											.css('position', 'absolute');
+							
+									};
+
+								}
+
+							/**
+							 * Fixes a numeric CSS value.
+							 * @param {string} x Value.
+							 * @return {string,integer} Fixed value.
+							 */
+							$._skel_layers_cssNumericValue = function(x) {
+								
+								// Percentage? Return as-is.
+									if (x && x.slice(-1) == '%')
+										return x;
+
+								// Otherwise, return as an integer.
+									return parseInt(x);
+									
+							};
+
+							/**
+							 * Translates the element back to its point of origin.
+							 * @return {jQuery} Element.
+							 */
+							$.fn._skel_layers_translateOrigin = function() {
+
+								for (var i=0; i < this.length; i++) {
+									
+									var	e = this[i], t = $(e);
+									
+									if (origins[e.id]) {
+										
+										t._skel_layers_doTranslate(origins[e.id], function() {
+										
+											// Make sure element is back to its true origin.
+												_._.iterate(origins[e.id], function(i) {
+													t.css(i, origins[e.id][i]);
+												});
+
+											// Reset stuff an animation might've changed.
+												_.cache.body
+													.css('overflow-x', 'visible');
+												_.cache.wrapper
+													.css('width', 'auto')
+													.css('padding-bottom', 0);
+										
+										});
+
 									}
 								
-								});
-
-						/**
-						 * Fixes a numeric CSS value.
-						 * @param {string} x Value.
-						 * @return {string,integer} Fixed value.
-						 */
-						$._skel_layers_cssNumericValue = function(x) {
+								}
+								
+								return $(this);
+							};
 							
-							// Percentage? Return as-is.
-								if (x && x.slice(-1) == '%')
-									return x;
+							/**
+							 * Translates the element to specific coordinates.
+							 * @param {integer} x Position on x-axis.
+							 * @param {integer} y Position on y-axis.
+							 * @return {jQuery} Element.
+							 */
+							$.fn._skel_layers_translate = function(x, y) {
 
-							// Otherwise, return as an integer.
-								return parseInt(x);
+								var i, j, fx, fy;
 								
-						};
+								// Fix x, y.
+									x = parseInt(x);
+									y = parseInt(y);
 
-						/**
-						 * Translates the element back to its point of origin.
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_translateOrigin = function() {
+								// If we're changing X, change some stuff.
+									if (x != 0) {
+										
+										_.cache.body
+											.css('overflow-x', 'hidden');
 
-							for (var i=0; i < this.length; i++) {
-								
-								var	e = this[i], t = $(e);
-								
-								if (origins[e.id])
-									t.animate(origins[e.id], _.config.speed, 'swing', function() {
-									
-										// Make sure element is back to its true origin.
-											_._.iterate(origins[e.id], function(i) {
-												t.css(i, origins[e.id][i]);
-											});
-
-										// Reset stuff an animation might've changed.
+										// Note: this is what's screwing stuff up on ios when mode != 'transform'
+										_.cache.wrapper
+											.css('width', _.cache.window.width());
+											
+									}
+								// Otherwise, set things back to normal (once we're done moving).
+									else {
+										
+										fx = function() {
+											
 											_.cache.body
 												.css('overflow-x', 'visible');
 											_.cache.wrapper
-												.css('width', 'auto')
+												.css('width', 'auto');
+										
+										};
+									
+									}
+
+								// If we're moving everything *up*, temporarily pad the bottom of the page wrapper.
+									if (y < 0)
+										_.cache.wrapper
+											.css('padding-bottom', Math.abs(y));
+								// Otherwise, lose the page wrapper's bottom padding (once we're done moving).
+									else
+										fy = function() {
+
+											_.cache.wrapper
 												.css('padding-bottom', 0);
-									
-									});
-							
-							}
-							
-							return $(this);
-						};
-						
-						/**
-						 * Translates the element to specific coordinates.
-						 * @param {integer} x Position on x-axis.
-						 * @param {integer} y Position on y-axis.
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_translate = function(x, y) {
 
-							var i, j, fx, fy;
-							
-							// Fix x, y.
-								x = parseInt(x);
-								y = parseInt(y);
+										};
 
-							// If we're changing X, change some stuff.
-								if (x != 0) {
-									
-									_.cache.body
-										.css('overflow-x', 'hidden');
-									_.cache.wrapper
-										.css('width', _.cache.window.width());
-								
-								}
-							// Otherwise, set things back to normal (once we're done moving).
-								else {
-									
-									fx = function() {
+								// Step through selector's elements.
+									for (i=0; i < this.length; i++) {
 										
-										_.cache.body
-											.css('overflow-x', 'visible');
-										_.cache.wrapper
-											.css('width', 'auto');
-									
-									};
-								
-								}
-							
-							// If we're moving everything *up*, temporarily pad the bottom of the page wrapper.
-								if (y < 0)
-									_.cache.wrapper
-										.css('padding-bottom', Math.abs(y));
-							// Otherwise, lose the page wrapper's bottom padding (once we're done moving).
-								else
-									fy = function() {
-
-										_.cache.wrapper
-											.css('padding-bottom', 0);
-
-									};
-
-							// Step through selector's elements.
-								for (i=0; i < this.length; i++) {
-									
-									var	e = this[i],
-										t = $(e),
-										p;
-										
-									// Calculate and cache origin (if it hasn't been set yet).
-										if (!origins[e.id]) {
+										var	e = this[i],
+											t = $(e),
+											p;
 											
-											if ((p = Layer.prototype.positions[t.data('skel-layers-layer-position')])) {
-											
-												origins[e.id] = {};
-											
-												// Vertical
-													switch (p.v) {
-													
-														case 'center':
-														case 'top':
-															origins[e.id].top = $._skel_layers_cssNumericValue(e.style.top);
-															break;
-															
-														case 'bottom':
-															origins[e.id].bottom = $._skel_layers_cssNumericValue(e.style.bottom);
-															break;
-														
-													}
-													
-												// Horizontal
-													switch (p.h) {
-													
-														case 'center':
-														case 'left':
-															origins[e.id].left = $._skel_layers_cssNumericValue(e.style.left);
-															break;
-															
-														case 'right':
-															origins[e.id].right = $._skel_layers_cssNumericValue(e.style.right);
-															break;
-															
-													}
-													
-											}
-											else {
-												p = t.position();
-												origins[e.id] = { top: p.top, left: p.left };
-											}
-										
-										}
-
-									// Calculate new position.
-										a = {};
-										
-										_._.iterate(origins[e.id], function(i) {
-											var v;
-											
-											switch (i) {
+										// Calculate and cache origin (if it hasn't been set yet).
+											if (!origins[e.id]) {
 												
-												case 'top':
-													v = _.recalcH(origins[e.id][i]) + y;
-													break;
+												if ((p = Layer.prototype.positions[t.data('skel-layers-layer-position')])) {
+												
+													origins[e.id] = {};
+												
+													// Vertical
+														switch (p.v) {
+														
+															case 'center':
+															case 'top':
+																origins[e.id].top = $._skel_layers_cssNumericValue(e.style.top);
+																break;
+																
+															case 'bottom':
+																origins[e.id].bottom = $._skel_layers_cssNumericValue(e.style.bottom);
+																break;
+															
+														}
+														
+													// Horizontal
+														switch (p.h) {
+														
+															case 'center':
+															case 'left':
+																origins[e.id].left = $._skel_layers_cssNumericValue(e.style.left);
+																break;
+																
+															case 'right':
+																origins[e.id].right = $._skel_layers_cssNumericValue(e.style.right);
+																break;
+																
+														}
+														
+												}
+												else {
 
-												case 'bottom':
-													v = _.recalcH(origins[e.id][i]) - y;
-													break;
+													p = t.position();
+													origins[e.id] = { top: p.top, left: p.left };
 
-												case 'left':
-													v = _.recalcW(origins[e.id][i]) + x;
-													break;
-
-												case 'right':
-													v = _.recalcW(origins[e.id][i]) - x;
-													break;
+												}
 											
 											}
+
+										// Calculate new position.
+											a = {};
 											
-											a[i] = v;
-										
-										});
-									
-									// Move.
-										t.animate(a, _.config.speed, 'swing', function() {
-											
-											// Run functions (if they're set).
-												if (fx)
-													(fx)();
+											_._.iterate(origins[e.id], function(i) {
+												var v;
+												
+												switch (i) {
 													
-												if (fy)
-													(fy)();
+													case 'top':
+														v = _.recalcH(origins[e.id][i]) + y;
+														break;
 
-										});
+													case 'bottom':
+														v = _.recalcH(origins[e.id][i]) - y;
+														break;
+
+													case 'left':
+														v = _.recalcW(origins[e.id][i]) + x;
+														break;
+
+													case 'right':
+														v = _.recalcW(origins[e.id][i]) - x;
+														break;
+												
+												}
+												
+												a[i] = v;
+											
+											});
+										
+										// Do translation.
+											t._skel_layers_doTranslate(a, function() {
+												
+												// Run functions (if they're set).
+													if (fx)
+														(fx)();
+														
+													if (fy)
+														(fy)();
+
+											});
+									
+									}
 								
-								}
+								return $(this);
 							
-							return $(this);
-						
-						};
+							};
 
-						/**
-						 * Initializes the element for animation
-						 * @return {jQuery} Element.
-						 */
-						$.fn._skel_layers_init = function() {
-				
-							return $(this)
-								.css('position', 'absolute');
-				
-						};
-					
-					}
+						}
 
 				}
 
