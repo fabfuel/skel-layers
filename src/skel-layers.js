@@ -1327,16 +1327,12 @@ skel.registerPlugin('layers', (function($) {
 				lockView: function(a) {
 
 					// Lock overflow (x-axis only).
-						if (a == 'x') {
-
+						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', 'hidden');
 
-							// Hack: iOS wrapper fix.
-								if (_.config.mode != 'transform'
-								&&	_._.vars.deviceType == 'ios')
-									_.cache.body.css('height', _.cache.document.height());
-
-						}
+					// Lock body height (only when mode != transform).
+						if (_.config.mode != 'transform')
+							_.cache.body.css('height', _.cache.document.height());
 
 					// Lock events.
 						_.cache.wrapper.on('touchstart.lock click.lock scroll.lock', function(e) {
@@ -1711,16 +1707,12 @@ skel.registerPlugin('layers', (function($) {
 				unlockView: function(a) {
 
 					// Unlock overflow (x-axis only).
-						if (a == 'x') {
-
+						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', 'visible');
 
-							// Hack: iOS wrapper fix.
-								if (_.config.mode != 'transform'
-								&&	_._.vars.deviceType == 'ios')
-									_.cache.body.css('height', '');
-
-						}
+					// Unlock body height (only when mode != transform).
+						if (_.config.mode != 'transform')
+							_.cache.body.css('height', '');
 
 					// Unlock events.
 						_.cache.wrapper.off('touchstart.lock click.lock scroll.lock');
@@ -1899,15 +1891,14 @@ skel.registerPlugin('layers', (function($) {
 					// body.
 						_.cache.body = $('body');
 
-						// Hack: iOS wrapper fix.
-							if (_.config.mode != 'transform'
-							&&	_._.vars.deviceType == 'ios') {
+						// Wrap body (only when mode != transform).
+							if (_.config.mode != 'transform') {
 
 								_.cache.htmlbody
 									.css('height', '100%');
 
-								_.cache.body.wrapInner('<div id="skel-layers" />');
-								_.cache.body = $('#skel-layers');
+								_.cache.body.wrapInner('<div id="skel-layers-body" />');
+								_.cache.body = $('#skel-layers-body');
 								_.cache.body
 									.css('position', 'absolute')
 									.css('left', 0)
