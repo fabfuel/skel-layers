@@ -1191,6 +1191,9 @@ skel.registerPlugin('layers', (function($) {
 				// Current exclusive layer.
 					exclusiveLayer: null,
 			
+				// document.
+					document: null,
+
 				// html.
 					html: null,
 			
@@ -1323,11 +1326,17 @@ skel.registerPlugin('layers', (function($) {
 				 */
 				lockView: function(a) {
 
-					_.cache.window._skel_layers_scrollPos = _.cache.window.scrollTop();
-				
 					// Lock overflow (x-axis only).
-						if (a == 'x')
+						if (a == 'x') {
+
 							_.cache.htmlbody.css('overflow-x', 'hidden');
+
+							// Hack: iOS wrapper fix.
+								if (_.config.mode != 'transform'
+								&&	_._.vars.deviceType == 'ios')
+									_.cache.body.css('height', _.cache.document.height());
+								
+						}
 						
 					// Lock events.
 						_.cache.wrapper.on('touchstart.lock click.lock scroll.lock', function(e) {
@@ -1700,10 +1709,18 @@ skel.registerPlugin('layers', (function($) {
 				 * @param {string} a Orientation.
 				 */
 				unlockView: function(a) {
-					
+
 					// Unlock overflow (x-axis only).
-						if (a == 'x')
+						if (a == 'x') {
+							
 							_.cache.htmlbody.css('overflow-x', 'visible');
+
+							// Hack: iOS wrapper fix.
+								if (_.config.mode != 'transform'
+								&&	_._.vars.deviceType == 'ios')
+									_.cache.body.css('height', '');
+
+						}
 					
 					// Unlock events.
 						_.cache.wrapper.off('touchstart.lock click.lock scroll.lock');
@@ -1870,15 +1887,36 @@ skel.registerPlugin('layers', (function($) {
 					
 					_._.DOMReady(function() {
 
+					// document.
+						_.cache.document = $(document);
+
 					// html.
 						_.cache.html = $('html');
-					
-					// body.
-						_.cache.body = $('body');
 
 					// htmlbody
 						_.cache.htmlbody = $('html,body');
 					
+					// body.
+						_.cache.body = $('body');
+
+						// Hack: iOS wrapper fix.
+							if (_.config.mode != 'transform'
+							&&	_._.vars.deviceType == 'ios') {
+
+								_.cache.htmlbody
+									.css('height', '100%');
+								
+								_.cache.body.wrapInner('<div id="skel-layers" />');
+								_.cache.body = $('#skel-layers');
+								_.cache.body
+									.css('position', 'absolute')
+									.css('left', 0)
+									.css('top', 0)
+									.css('min-height', '100%')
+									.css('width', '100%');
+
+							}
+
 					// wrapper.
 						_.cache.body.wrapInner('<div id="skel-layers-wrapper" />');
 						_.cache.wrapper = $('#skel-layers-wrapper');
@@ -1887,6 +1925,7 @@ skel.registerPlugin('layers', (function($) {
 							.css('left', '0')
 							.css('right', '0')
 							.css('top', '0')
+							.css('height', '100%')
 							._skel_layers_init();
 
 					// hiddenWrapper.
