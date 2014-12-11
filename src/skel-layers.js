@@ -1711,7 +1711,7 @@ skel.registerPlugin('layers', (function($) {
 
 					// Unlock overflow (x-axis only).
 						if (a == 'x')
-							_.cache.htmlbody.css('overflow-x', 'visible');
+							_.cache.htmlbody.css('overflow-x', '');
 
 					// Unlock parent height (only when mode != transform).
 						if (_.config.mode != 'transform')
@@ -1921,9 +1921,9 @@ skel.registerPlugin('layers', (function($) {
 						_.cache.wrapper = $('#skel-layers-wrapper');
 						_.cache.wrapper
 							.css('position', 'relative')
-							.css('left', '0')
-							.css('right', '0')
-							.css('top', '0')
+							.css('left', 0)
+							.css('right', 0)
+							.css('top', 0)
 							.css('height', '100%')
 							._skel_layers_init();
 
@@ -2125,7 +2125,7 @@ skel.registerPlugin('layers', (function($) {
 
 											// Reset stuff an animation might've changed.
 												_.cache.parent
-													.css('overflow-x', 'visible');
+													.css('overflow-x', '');
 												_.cache.wrapper
 													.css('width', 'auto')
 													.css('padding-bottom', 0);
@@ -2170,7 +2170,7 @@ skel.registerPlugin('layers', (function($) {
 										fx = function() {
 
 											_.cache.parent
-												.css('overflow-x', 'visible');
+												.css('overflow-x', '');
 											_.cache.wrapper
 												.css('width', 'auto');
 
