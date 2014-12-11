@@ -1333,8 +1333,9 @@ skel.registerPlugin('layers', (function($) {
 						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', 'hidden');
 
-					// Lock parent height (only when mode != transform).
-						if (_.config.mode != 'transform')
+					// Lock parent height (only when mode != transform on iOS).
+						if (_.config.mode != 'transform'
+						&&	skel.vars.deviceType == 'ios')
 							_.cache.parent.css('height', _.cache.document.height());
 
 					// Lock events.
@@ -1713,8 +1714,9 @@ skel.registerPlugin('layers', (function($) {
 						if (a == 'x')
 							_.cache.htmlbody.css('overflow-x', '');
 
-					// Unlock parent height (only when mode != transform).
-						if (_.config.mode != 'transform')
+					// Unlock parent height (only when mode != transform on iOS).
+						if (_.config.mode != 'transform'
+						&&	skel.vars.deviceType == 'ios')
 							_.cache.parent.css('height', '');
 
 					// Unlock events.
@@ -1900,9 +1902,6 @@ skel.registerPlugin('layers', (function($) {
 					// parent.
 						if (_.config.mode != 'transform') {
 
-							_.cache.htmlbody
-								.css('height', '100%');
-
 							_.cache.body.wrapInner('<div id="skel-layers-parent" />');
 							_.cache.parent = $('#skel-layers-parent');
 							_.cache.parent
@@ -1924,7 +1923,6 @@ skel.registerPlugin('layers', (function($) {
 							.css('left', 0)
 							.css('right', 0)
 							.css('top', 0)
-							.css('height', '100%')
 							._skel_layers_init();
 
 					// hiddenWrapper.
@@ -2156,10 +2154,9 @@ skel.registerPlugin('layers', (function($) {
 								// If we're changing X, change some stuff.
 									if (x != 0) {
 
-										_.cache.parent
+										(skel.vars.deviceType == 'ios' ? _.cache.parent : _.cache.body)
 											.css('overflow-x', 'hidden');
 
-										// Note: this is what's screwing stuff up on ios when mode != 'transform'
 										_.cache.wrapper
 											.css('width', _.cache.window.width());
 
@@ -2169,8 +2166,9 @@ skel.registerPlugin('layers', (function($) {
 
 										fx = function() {
 
-											_.cache.parent
+											(skel.vars.deviceType == 'ios' ? _.cache.parent : _.cache.body)
 												.css('overflow-x', '');
+
 											_.cache.wrapper
 												.css('width', 'auto');
 
