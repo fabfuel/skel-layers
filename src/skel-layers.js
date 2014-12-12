@@ -212,11 +212,12 @@ skel.registerPlugin('layers', (function($) {
 		 * A layer.
 		 * @param {string} id ID.
 		 * @param {object} config Config.
+		 * @param {integer} index Index.
 		 * @class
 		 */
 		function Layer(id, config, index) {
 
-			var a, x;
+			var a, x, _this = this;
 
 			this.id = id;
 			this.index = index;
@@ -282,40 +283,45 @@ skel.registerPlugin('layers', (function($) {
 
 				};
 
-			// Linked to states?
-				if (this.config.states
-				&&	this.config.states != _._.sd) {
+			// Link element to states/breakpoints (or just attach it).
+				_._.DOMReady(function() {
 
-					// Cache element.
-						_._.cacheElement(x);
+					// Linked to states?
+						if (_this.config.states
+						&&	_this.config.states != _._.sd) {
 
-					// Add to states.
-						a = _._.getArray(this.config.states);
+							// Cache element.
+								_._.cacheElement(x);
 
-						_._.iterate(a, function(i) {
-							_._.addCachedElementToState(a[i], x);
-						});
+							// Add to states.
+								a = _._.getArray(_this.config.states);
 
-				}
+								_._.iterate(a, function(i) {
+									_._.addCachedElementToState(a[i], x);
+								});
 
-			// Linked to breakpoints?
-				else if (this.config.breakpoints) {
+						}
 
-					// Cache element.
-						_._.cacheElement(x);
+					// Linked to breakpoints?
+						else if (_this.config.breakpoints) {
 
-					// Add to breakpoints.
-						a = _._.getArray(this.config.breakpoints);
+							// Cache element.
+								_._.cacheElement(x);
 
-						_._.iterate(a, function(i) {
-							_._.addCachedElementToBreakpoint(a[i], x);
-						});
+							// Add to breakpoints.
+								a = _._.getArray(_this.config.breakpoints);
 
-				}
+								_._.iterate(a, function(i) {
+									_._.addCachedElementToBreakpoint(a[i], x);
+								});
 
-			// Not linked to either? Just attach it.
-				else
-					_._.attachElement(x);
+						}
+
+					// Not linked to either? Just attach it.
+						else
+							_._.attachElement(x);
+
+				});
 
 		}
 
@@ -1310,11 +1316,59 @@ skel.registerPlugin('layers', (function($) {
 			 */
 			eventType: 'click touchend',
 
+			/**
+			 * Layer index.
+			 * @type {integer }
+			 */
+			layerIndex: 1,
+
 		/******************************/
 		/* Methods                    */
 		/******************************/
 
 			/* API */
+
+				/**
+				 * Creates a layer.
+				 * @param {string} id Layer ID.
+				 * @param {object} config Configuration.
+				 * @param {bool} skipStateUpdate If true, doesn't ask Skel to update its state.
+				 * @return {Layer} Layer.
+				 */
+				create: function(id, config, skipStateUpdate) {
+
+					var e, layer;
+
+					// No position? Bail.
+						if (!('position' in config))
+							return;
+
+					// No element HTML *and* no inline element? Skip layer.
+						if (!config.html
+						&&	(e = $('#' + id)).length == 0)
+							return;
+
+					// Create layer.
+						layer = new Layer(id, config, _.layerIndex++);
+
+					// Add it to cache.
+						_.cache.layers[id] = layer;
+
+					// Inline element? Use it.
+						if (e) {
+
+							e.children().appendTo(layer.element);
+							e.remove();
+
+						}
+
+					// Force a state update.
+						if (!skipStateUpdate)
+							_._.updateState();
+
+					return layer;
+
+				},
 
 				/**
 				 * Shows a layer.
@@ -1911,35 +1965,8 @@ skel.registerPlugin('layers', (function($) {
 				 */
 				initLayers: function() {
 
-					var config, element, layer, i = 1;
-
 					_._.iterate(_.config.layers, function(id) {
-
-						var e;
-
-						// No position? Bail.
-							if (!('position' in _.config.layers[id]))
-								return;
-
-						// No element HTML *and* no inline element? Skip layer.
-							if (!_.config.layers[id].html
-							&&	(e = $('#' + id)).length == 0)
-								return;
-
-						// Create layer.
-							layer = new Layer(id, _.config.layers[id], i++);
-
-						// Add it to cache.
-							_.cache.layers[id] = layer;
-
-						// Inline element? Use it.
-							if (e) {
-
-								e.children().appendTo(layer.element);
-								e.remove();
-
-							}
-
+						_.create(id, _.config.layers[id], true);
 					});
 
 				},
