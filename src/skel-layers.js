@@ -463,7 +463,7 @@ skel.registerPlugin('layers', (function($) {
 							$le
 								.scrollTop(0)
 								._skel_layers_promote(config.zIndex)
-								.css(config.side, '-' + _.recalcW(_._.useActive(config.width)) + 'px')
+								.css(config.side, '-' + _.recalcW(config._width) + 'px')
 								.show();
 
 							if (config.resetForms)
@@ -478,7 +478,7 @@ skel.registerPlugin('layers', (function($) {
 
 						// Animate.
 							window.setTimeout(function() {
-								$le._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0);
+								$le._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
 							}, 50);
 
 					},
@@ -524,7 +524,7 @@ skel.registerPlugin('layers', (function($) {
 							$le
 								.scrollTop(0)
 								._skel_layers_promote(config.zIndex)
-								.css(config.side, '-' + _.recalcW(_._.useActive(config.height)) + 'px')
+								.css(config.side, '-' + _.recalcW(config._height) + 'px')
 								.show();
 
 							if (config.resetForms)
@@ -539,7 +539,7 @@ skel.registerPlugin('layers', (function($) {
 
 						// Animate.
 							window.setTimeout(function() {
-								$le._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcW(_._.useActive(config.height)));
+								$le._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcW(config._height));
 							}, 50);
 
 					},
@@ -585,7 +585,7 @@ skel.registerPlugin('layers', (function($) {
 						// Set up layer element.
 							$le
 								.scrollTop(0)
-								.css(config.side, '-' + _.recalcW(_._.useActive(config.width)) + 'px')
+								.css(config.side, '-' + _.recalcW(config._width) + 'px')
 								.show();
 
 							if (config.resetForms)
@@ -603,7 +603,7 @@ skel.registerPlugin('layers', (function($) {
 
 						// Animate.
 							window.setTimeout(function() {
-								$le.add($w)._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0);
+								$le.add($w)._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
 							}, 50);
 
 					},
@@ -653,7 +653,7 @@ skel.registerPlugin('layers', (function($) {
 						// Set up layer element.
 							$le
 								.scrollTop(0)
-								.css(config.side, '-' + _.recalcH(_._.useActive(config.height)) + 'px')
+								.css(config.side, '-' + _.recalcH(config._height) + 'px')
 								.show();
 
 							if (config.resetForms)
@@ -668,7 +668,7 @@ skel.registerPlugin('layers', (function($) {
 
 						// Animate.
 							window.setTimeout(function() {
-								$le.add($w)._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcH(_._.useActive(config.height)));
+								$le.add($w)._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcH(config._height));
 							}, 50);
 
 					},
@@ -733,7 +733,7 @@ skel.registerPlugin('layers', (function($) {
 
 						// Animate.
 							window.setTimeout(function() {
-								$w._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(_._.useActive(config.width)), 0);
+								$w._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
 							}, 50);
 
 					},
@@ -876,19 +876,37 @@ skel.registerPlugin('layers', (function($) {
 					$le = this.$element,
 					x;
 
-				// Set size.
+				// Determine active size.
+
+					// Clear previously set size.
+						$le
+							.css('width', '')
+							.css('height', '');
+
+					// Set active size.
+						config._width = _._.useActive(config.width);
+						config._height = _._.useActive(config.height);
+
+					// Handle 'auto'.
+						if (config._width == 'auto')
+							config._width = $le.outerWidth() + 1;
+
+						if (config._height == 'auto')
+							config._height = $le.outerHeight() + 1;
+
+				// Apply active size.
 					$le
-						.css('width', _._.useActive(config.width))
-						.css('height', _._.useActive(config.height));
+						.css('width', config._width)
+						.css('height', config._height);
 
 					// Hack: iOS fixes.
 						if (_._.vars.deviceType == 'ios') {
 
 							// If the layer's height is 100%, and it's not a hidden one (ie. it'll be visible when we
 							// scroll), pad it a bit to cover up the gap we'd otherwise see (caused by the hiding address bar).
-								if (_._.useActive(config.height) == '100%'
+								if (config._height == '100%'
 								&&	!config.hidden)
-									$le.css('height', '-webkit-calc(' + _._.useActive(config.height) + ' + 70px)');
+									$le.css('height', '-webkit-calc(' + config._height + ' + 70px)');
 
 							// iOS 8 (possibly 7) breaks scrolling on fixed elements on blur. This fugly workaround
 							// seems to fix it for the most part.
@@ -930,7 +948,7 @@ skel.registerPlugin('layers', (function($) {
 							case 'center':
 								$le
 									.css('top', '50%')
-									.css('margin-top', '-' + _.getHalf(_._.useActive(config.height)));
+									.css('margin-top', '-' + _.getHalf(config._height));
 								break;
 
 						}
@@ -949,7 +967,7 @@ skel.registerPlugin('layers', (function($) {
 							case 'center':
 								$le
 									.css('left', '50%')
-									.css('margin-left', '-' + _.getHalf(_._.useActive(config.width)));
+									.css('margin-left', '-' + _.getHalf(config._width));
 								break;
 
 						}
