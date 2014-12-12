@@ -877,7 +877,6 @@ skel.registerPlugin('layers', (function($) {
 					x;
 
 				// Set size.
-
 					$le
 						.css('width', _._.useActive(config.width))
 						.css('height', _._.useActive(config.height));
@@ -887,7 +886,7 @@ skel.registerPlugin('layers', (function($) {
 
 							// If the layer's height is 100%, and it's not a hidden one (ie. it'll be visible when we
 							// scroll), pad it a bit to cover up the gap we'd otherwise see (caused by the hiding address bar).
-								if (config.height == '100%'
+								if (_._.useActive(config.height) == '100%'
 								&&	!config.hidden)
 									$le.css('height', '-webkit-calc(' + _._.useActive(config.height) + ' + 70px)');
 
@@ -931,7 +930,7 @@ skel.registerPlugin('layers', (function($) {
 							case 'center':
 								$le
 									.css('top', '50%')
-									.css('margin-top', '-' + _.getHalf(config.height));
+									.css('margin-top', '-' + _.getHalf(_._.useActive(config.height)));
 								break;
 
 						}
@@ -950,7 +949,7 @@ skel.registerPlugin('layers', (function($) {
 							case 'center':
 								$le
 									.css('left', '50%')
-									.css('margin-left', '-' + _.getHalf(config.width));
+									.css('margin-left', '-' + _.getHalf(_._.useActive(config.width)));
 								break;
 
 						}
