@@ -836,6 +836,16 @@ skel.registerPlugin('layers', (function($) {
 					v: 'center',
 					h: 'right',
 					side: 'right'
+				},
+				'center': {
+					v: 'center',
+					h: 'center',
+					side: false
+				},
+				'center-center': {
+					v: 'center',
+					h: 'center',
+					side: false
 				}
 			};
 
