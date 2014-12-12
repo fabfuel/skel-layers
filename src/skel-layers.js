@@ -2114,34 +2114,34 @@ skel.registerPlugin('layers', (function($) {
 					// Mode: Position, Animate.
 						else {
 
-							var f, origins = [];
+							var origins = [];
+
+							// Forced resets.
+								_.cache.window
+									.resize(function() {
+
+										if (_.config.speed != 0) {
+
+											var t = _.config.speed;
+
+											_.config.speed = 0;
+
+											window.setTimeout(function() {
+
+												// Restore animation speed.
+													_.config.speed = t;
+
+												// Wipe origins.
+													origins = [];
+
+											}, t);
+
+										}
+
+									});
 
 							// Mode: Animate.
 								if (_.config.mode == 'animate') {
-
-									// Forced resets.
-										_.cache.window
-											.resize(function() {
-
-												if (_.config.speed != 0) {
-
-													var t = _.config.speed;
-
-													_.config.speed = 0;
-
-													window.setTimeout(function() {
-
-														// Restore animation speed.
-															_.config.speed = t;
-
-														// Wipe origins.
-															origins = [];
-
-													}, t);
-
-												}
-
-											});
 
 									// Fix easing.
 										if (_.config.easing.substr(0, 4) == 'ease') {
