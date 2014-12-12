@@ -235,13 +235,17 @@ skel.registerPlugin('layers', (function($) {
 					zIndex: this.index,
 					html: '',
 					hidden: false,
-					exclusive: true,
+					exclusive: null,
 					resetScroll: true,
 					resetForms: true,
 					swipeToHide: true,
 					clickToHide: false
 				};
 				_._.extend(this.config, config);
+
+				// If exclusive isn't explicitly configured, set it to the same value as hidden.
+					if (this.config.exclusive === null)
+						this.config.exclusive = this.config.hidden;
 
 			// Element.
 				this.element = _._.newDiv(this.config.html);
@@ -358,7 +362,8 @@ skel.registerPlugin('layers', (function($) {
 								$le._skel_layers_resetForms();
 
 						// Lock view.
-							_.lockView('x');
+							if (config.exclusive)
+								_.lockView('x');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -373,7 +378,8 @@ skel.registerPlugin('layers', (function($) {
 							$le.find('*').trigger('blur', [true]);
 
 						// Unlock view.
-							_.unlockView('x');
+							if (config.exclusive)
+								_.unlockView('x');
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
@@ -405,7 +411,8 @@ skel.registerPlugin('layers', (function($) {
 								$le._skel_layers_resetForms();
 
 						// Lock view.
-							_.lockView('x');
+							if (config.exclusive)
+								_.lockView('x');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -428,7 +435,8 @@ skel.registerPlugin('layers', (function($) {
 							$le._skel_layers_fadeOut(function() {
 
 								// Unlock view.
-									_.unlockView('x');
+									if (config.exclusive)
+										_.unlockView('x');
 
 								// Layer => Hidden wrapper.
 									layer.moveToHiddenWrapper();
@@ -462,7 +470,8 @@ skel.registerPlugin('layers', (function($) {
 								$le._skel_layers_resetForms();
 
 						// Lock view.
-							_.lockView('x');
+							if (config.exclusive)
+								_.lockView('x');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -487,7 +496,8 @@ skel.registerPlugin('layers', (function($) {
 						window.setTimeout(function() {
 
 						// Unlock view.
-							_.unlockView('x');
+							if (config.exclusive)
+								_.unlockView('x');
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
@@ -521,7 +531,8 @@ skel.registerPlugin('layers', (function($) {
 								$le._skel_layers_resetForms();
 
 						// Lock view.
-							_.lockView('y');
+							if (config.exclusive)
+								_.lockView('y');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -546,7 +557,8 @@ skel.registerPlugin('layers', (function($) {
 						window.setTimeout(function() {
 
 						// Unlock view.
-							_.unlockView('y');
+							if (config.exclusive)
+								_.unlockView('y');
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
@@ -583,7 +595,8 @@ skel.registerPlugin('layers', (function($) {
 							$w._skel_layers_promote();
 
 						// Lock view.
-							_.lockView('x');
+							if (config.exclusive)
+								_.lockView('x');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -609,7 +622,8 @@ skel.registerPlugin('layers', (function($) {
 						window.setTimeout(function() {
 
 						// Unlock view.
-							_.unlockView('x');
+							if (config.exclusive)
+								_.unlockView('x');
 
 						// Revert layer element.
 							$le.hide();
@@ -646,7 +660,8 @@ skel.registerPlugin('layers', (function($) {
 								$le._skel_layers_resetForms();
 
 						// Lock view.
-							_.lockView('y');
+							if (config.exclusive)
+								_.lockView('y');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -672,7 +687,8 @@ skel.registerPlugin('layers', (function($) {
 						window.setTimeout(function() {
 
 						// Unlock view.
-							_.unlockView('y');
+							if (config.exclusive)
+								_.unlockView('y');
 
 						// Revert layer element.
 							$le
@@ -709,7 +725,8 @@ skel.registerPlugin('layers', (function($) {
 							$w._skel_layers_promote();
 
 						// Lock view.
-							_.lockView('x');
+							if (config.exclusive)
+								_.lockView('x');
 
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
@@ -735,7 +752,8 @@ skel.registerPlugin('layers', (function($) {
 						window.setTimeout(function() {
 
 						// Unlock view.
-							_.unlockView('x');
+							if (config.exclusive)
+								_.unlockView('x');
 
 						// Revert layer element.
 							$le.hide();
