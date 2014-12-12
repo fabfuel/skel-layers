@@ -372,6 +372,63 @@ skel.registerPlugin('layers', (function($) {
 				},
 
 				/**
+				 * Fade.
+				 * Fades the layer in/out (overlaps the page).
+				 */
+				fade: {
+					show: function(layer) {
+
+						var	config = layer.config,
+							$le = layer.$element;
+
+						// Set up layer element.
+							$le
+								.scrollTop(0)
+								._skel_layers_promote(config.zIndex)
+								.css('opacity', 0)
+								.show();
+
+							if (config.resetForms)
+								$le._skel_layers_resetForms();
+
+						// Lock view.
+							_.lockView('x');
+
+						// Layer => Visible wrapper.
+							layer.moveToVisibleWrapper();
+
+						// Fade in.
+							window.setTimeout(function() {
+								$le._skel_layers_fadeIn();
+							}, 50);
+
+					},
+					hide: function(layer) {
+
+						var	config = layer.config,
+							$le = layer.$element;
+
+						// Defocus layer element.
+							$le.find('*').trigger('blur', [true]);
+
+						// Fade out.
+							$le._skel_layers_fadeOut(function() {
+
+								// Unlock view.
+									_.unlockView('x');
+
+								// Layer => Hidden wrapper.
+									layer.moveToHiddenWrapper();
+
+								// Revert layer element.
+									$le._skel_layers_demote().hide();
+
+							});
+
+					}
+				},
+
+				/**
 				 * Overlay (x-axis).
 				 * Slides in from the left/right, overlapping the page.
 				 */
@@ -1952,6 +2009,44 @@ skel.registerPlugin('layers', (function($) {
 				 */
 				initAnimation: function() {
 
+					// Mode: Animate.
+						if (_.config.mode == 'animate') {
+
+							$.fn._skel_layers_fadeIn = function(f) {
+								$(this).fadeTo(_.config.speed, 1, f);
+							};
+
+							$.fn._skel_layers_fadeOut = function(f) {
+								$(this).fadeTo(_.config.speed, 0, f);
+							};
+
+						}
+
+					// Mode: Transform, Transition.
+						else {
+
+							$.fn._skel_layers_fadeIn = function(f) {
+
+								$(this)
+									.css('opacity', 1);
+
+								if (f)
+									window.setTimeout(f, _.config.speed + 50);
+
+							};
+
+							$.fn._skel_layers_fadeOut = function(f) {
+
+								$(this)
+									.css('opacity', 0);
+
+								if (f)
+									window.setTimeout(f, _.config.speed + 50);
+
+							};
+
+						}
+
 					// Mode: Transform.
 						if (_.config.mode == 'transform') {
 
@@ -1982,7 +2077,8 @@ skel.registerPlugin('layers', (function($) {
 								return $(this)
 										.css('backface-visibility', 'hidden')
 										.css('perspective', '500')
-										._skel_layers_xcss('transition', 'transform ' + (_.config.speed / 1000.00) + 's ' + _.config.easing);
+										._skel_layers_xcss('transition',	'transform ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																			'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing);
 
 							};
 
@@ -2077,9 +2173,10 @@ skel.registerPlugin('layers', (function($) {
 
 										return $(this)
 											.css('transition',	'top ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
-																						'right ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
-																						'bottom ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
-																						'left ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
+																'right ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																'bottom ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																'left ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
+																'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
 											.css('position', 'absolute');
 
 									};
