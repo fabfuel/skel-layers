@@ -232,6 +232,8 @@ skel.registerPlugin('layers', (function($) {
 					orientation: 'none',
 					width: 0,
 					height: 0,
+					maxWidth: '100%',
+					maxHeight: '100%',
 					zIndex: this.index,
 					html: '',
 					hidden: false,
@@ -880,6 +882,8 @@ skel.registerPlugin('layers', (function($) {
 
 					// Clear previously set size.
 						$le
+							.css('max-width', '')
+							.css('max-height', '')
 							.css('width', '')
 							.css('height', '');
 
@@ -896,6 +900,8 @@ skel.registerPlugin('layers', (function($) {
 
 				// Apply active size.
 					$le
+						.css('max-width', _._.useActive(config.maxWidth))
+						.css('max-height', _._.useActive(config.maxHeight))
 						.css('width', config._width)
 						.css('height', config._height);
 
