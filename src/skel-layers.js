@@ -1324,7 +1324,10 @@ skel.registerPlugin('layers', (function($) {
 					speed: 500,
 
 				// Animation easing.
-					easing: 'ease'
+					easing: 'ease',
+
+				// Wrap on init? (false = don't wrap until first layer has been created)
+					wrap: true
 
 			},
 
@@ -1369,6 +1372,14 @@ skel.registerPlugin('layers', (function($) {
 						if (!config.html
 						&&	(e = $('#' + id)).length == 0)
 							return;
+
+					// Initialize wrappers (if they weren't on init).
+						if (!_.config.wrap) {
+
+							_.config.wrap = true;
+							_.initWrappers();
+
+						}
 
 					// Create layer.
 						layer = new Layer(id, config, _.layerIndex++);
@@ -1954,6 +1965,10 @@ skel.registerPlugin('layers', (function($) {
 						_.initAnimation();
 						_.initObjects();
 
+					// Initialize wrappers.
+						if (_.config.wrap)
+							_.initWrappers();
+
 					// Final initialization stuff.
 						_._.DOMReady(function() {
 
@@ -2011,50 +2026,6 @@ skel.registerPlugin('layers', (function($) {
 
 					// htmlbody
 						_.cache.htmlbody = $('html,body');
-
-					// parent.
-						if (_.config.mode != 'transform') {
-
-							_.cache.body.wrapInner('<div id="skel-layers-parent" />');
-							_.cache.parent = $('#skel-layers-parent');
-							_.cache.parent
-								.css('position', 'absolute')
-								.css('left', 0)
-								.css('top', 0)
-								.css('min-height', '100%')
-								.css('width', '100%');
-
-						}
-						else
-							_.cache.parent = _.cache.body;
-
-					// wrapper.
-						_.cache.parent.wrapInner('<div id="skel-layers-wrapper" />');
-						_.cache.wrapper = $('#skel-layers-wrapper');
-						_.cache.wrapper
-							.css('position', 'relative')
-							.css('left', 0)
-							.css('right', 0)
-							.css('top', 0)
-							._skel_layers_init();
-
-					// hiddenWrapper.
-						_.cache.hiddenWrapper = $('<div id="skel-layers-hiddenWrapper" />').appendTo(_.cache.parent);
-						_.cache.hiddenWrapper
-							.css('height', '100%');
-
-					// visibleWrapper.
-						_.cache.visibleWrapper = $('<div id="skel-layers-visibleWrapper" />').appendTo(_.cache.parent);
-						_.cache.visibleWrapper
-							.css('position', 'relative');
-
-					// Register locations.
-						_._.registerLocation('skel_layers_hiddenWrapper', _.cache.hiddenWrapper[0]);
-						_._.registerLocation('skel_layers_visibleWrapper', _.cache.visibleWrapper[0]);
-						_._.registerLocation('skel_layers_wrapper', _.cache.wrapper[0]);
-
-					// Hack: "autofocus" attribute stops working on webkit when we wrap stuff, so go ahead and force focus here.
-						$('[autofocus]').focus();
 
 					});
 
@@ -2443,6 +2414,61 @@ skel.registerPlugin('layers', (function($) {
 							};
 
 						}
+
+				},
+
+				/**
+				 * Initializes wrappers.
+				 */
+				initWrappers: function() {
+
+					_._.DOMReady(function() {
+
+					// parent.
+						if (_.config.mode != 'transform') {
+
+							_.cache.body.wrapInner('<div id="skel-layers-parent" />');
+							_.cache.parent = $('#skel-layers-parent');
+							_.cache.parent
+								.css('position', 'absolute')
+								.css('left', 0)
+								.css('top', 0)
+								.css('min-height', '100%')
+								.css('width', '100%');
+
+						}
+						else
+							_.cache.parent = _.cache.body;
+
+					// wrapper.
+						_.cache.parent.wrapInner('<div id="skel-layers-wrapper" />');
+						_.cache.wrapper = $('#skel-layers-wrapper');
+						_.cache.wrapper
+							.css('position', 'relative')
+							.css('left', 0)
+							.css('right', 0)
+							.css('top', 0)
+							._skel_layers_init();
+
+					// hiddenWrapper.
+						_.cache.hiddenWrapper = $('<div id="skel-layers-hiddenWrapper" />').appendTo(_.cache.parent);
+						_.cache.hiddenWrapper
+							.css('height', '100%');
+
+					// visibleWrapper.
+						_.cache.visibleWrapper = $('<div id="skel-layers-visibleWrapper" />').appendTo(_.cache.parent);
+						_.cache.visibleWrapper
+							.css('position', 'relative');
+
+					// Register locations.
+						_._.registerLocation('skel_layers_hiddenWrapper', _.cache.hiddenWrapper[0]);
+						_._.registerLocation('skel_layers_visibleWrapper', _.cache.visibleWrapper[0]);
+						_._.registerLocation('skel_layers_wrapper', _.cache.wrapper[0]);
+
+					// Hack: "autofocus" attribute stops working on webkit when we wrap stuff, so go ahead and force focus here.
+						$('[autofocus]').focus();
+
+					});
 
 				}
 
