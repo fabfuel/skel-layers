@@ -1437,13 +1437,55 @@ skel.registerPlugin('layers', (function($) {
 				},
 
 				/**
-				 * Shows a layer.
+				 * Destroys a layer.
 				 * @param {string} id Layer ID.
+				 * @return {bool} True on success, false on failure.
 				 */
-				show: function(id) {
-					_._.DOMReady(function() {
-						_.cache.layers[id].show();
-					});
+				destroy: function(id) {
+
+					// Doesn't exist? Bail.
+						if (!(id in _.cache.layers))
+							return;
+
+					var layer = _.cache.layers[id];
+
+					// Suspend.
+						layer.suspend();
+
+					// Unlink from states.
+						if (layer.config.states
+						&&	layer.config.states != _._.sd) {
+
+							a = _._.getArray(layer.config.states);
+
+							_._.iterate(a, function(i) {
+								_._.removeCachedElementFromState(a[i], id);
+							});
+
+						}
+
+					// Unlink from breakpoints.
+						if (layer.config.breakpoints) {
+
+							a = _._.getArray(layer.config.breakpoints);
+
+							_._.iterate(a, function(i) {
+								_._.removeCachedElementFromBreakpoint(a[i], id);
+							});
+
+						}
+
+					// Remove element.
+						$(layer.element).remove();
+
+					// Remove from Layers' cache.
+						delete _.cache.layers[id];
+
+					// Remove from Skel's cache.
+						skel.uncacheElement(id);
+
+					return true;
+
 				},
 
 				/**
@@ -1453,6 +1495,16 @@ skel.registerPlugin('layers', (function($) {
 				hide: function(id) {
 					_._.DOMReady(function() {
 						_.cache.layers[id].hide();
+					});
+				},
+
+				/**
+				 * Shows a layer.
+				 * @param {string} id Layer ID.
+				 */
+				show: function(id) {
+					_._.DOMReady(function() {
+						_.cache.layers[id].show();
 					});
 				},
 
