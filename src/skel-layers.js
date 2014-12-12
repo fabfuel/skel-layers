@@ -2126,32 +2126,32 @@ skel.registerPlugin('layers', (function($) {
 
 							var origins = [];
 
-							// Forced resets.
-								_.cache.window
-									.resize(function() {
-
-										if (_.config.speed != 0) {
-
-											var t = _.config.speed;
-
-											_.config.speed = 0;
-
-											window.setTimeout(function() {
-
-												// Restore animation speed.
-													_.config.speed = t;
-
-												// Wipe origins.
-													origins = [];
-
-											}, t);
-
-										}
-
-									});
-
 							// Mode: Animate.
 								if (_.config.mode == 'animate') {
+
+									// Resize fix.
+										_.cache.window
+											.resize(function() {
+
+												if (_.config.speed != 0) {
+
+													var t = _.config.speed;
+
+													_.config.speed = 0;
+
+													window.setTimeout(function() {
+
+														// Restore animation speed.
+															_.config.speed = t;
+
+														// Wipe origins.
+															origins = [];
+
+													}, 0);
+
+												}
+
+											});
 
 									// Fix easing.
 										if (_.config.easing.substr(0, 4) == 'ease') {
@@ -2184,6 +2184,19 @@ skel.registerPlugin('layers', (function($) {
 
 							// Mode: Position.
 								else {
+
+									// Resize fix.
+										_.cache.window
+											.resize(function() {
+
+												window.setTimeout(function() {
+
+													// Wipe origins.
+														origins = [];
+
+												}, 0);
+
+											});
 
 									/**
 									 * Performs the actual translation.
