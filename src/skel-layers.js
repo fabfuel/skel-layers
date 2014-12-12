@@ -1357,6 +1357,10 @@ skel.registerPlugin('layers', (function($) {
 
 					var e, layer;
 
+					// Already exists? Bail.
+						if (id in _.cache.layers)
+							return;
+
 					// No position? Bail.
 						if (!('position' in config))
 							return;
