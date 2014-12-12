@@ -351,6 +351,9 @@ skel.registerPlugin('layers', (function($) {
 							if (config.resetForms)
 								$le._skel_layers_resetForms();
 
+						// Lock view.
+							_.lockView('x');
+
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
@@ -360,13 +363,17 @@ skel.registerPlugin('layers', (function($) {
 						var	config = layer.config,
 							$le = layer.$element;
 
-						// Revert layer element.
-							$le
-								.hide()
-								._skel_layers_demote();
+						// Defocus layer element.
+							$le.find('*').trigger('blur', [true]);
+
+						// Unlock view.
+							_.unlockView('x');
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
+
+						// Revert layer element.
+							$le._skel_layers_demote().hide();
 
 					}
 				},
