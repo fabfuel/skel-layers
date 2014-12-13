@@ -2196,6 +2196,10 @@ skel.registerPlugin('layers', (function($) {
 								&&	!_.canUseProperty('transition'))
 									_.config.mode = 'animate';
 
+							// Hack: Force WP to use 'animate' (poor transform/position performance).
+								if (_._.vars.deviceType == 'wp')
+									_.config.mode = 'animate';
+
 					// Set window.
 						_.cache.window = $(window);
 
