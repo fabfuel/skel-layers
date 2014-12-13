@@ -1515,7 +1515,7 @@ skel.registerPlugin('layers', (function($) {
 
 			/**
 			 * Layer index.
-			 * @type {integer }
+			 * @type {integer}
 			 */
 			layerIndex: 1,
 
@@ -1678,6 +1678,35 @@ skel.registerPlugin('layers', (function($) {
 				},
 
 			/* Main */
+
+				/**
+				 * Temporary element for canUseProperty()
+				 * @type {DOMElement}
+				 */
+				canUseProperty_element: null,
+
+				/**
+				 * Determines if the browser supports a given property.
+				 * @param {string} p Property.
+				 * @return {bool} True if property is supported, false if not.
+				 */
+				canUseProperty: function(p) {
+
+					if (!_.canUseProperty_element)
+						_.canUseProperty_element = document.createElement('div');
+
+					var e = _.canUseProperty_element.style,
+						up = p.charAt(0).toUpperCase() + p.slice(1);
+
+					return	(
+								p in e
+							||	('Moz' + up) in e
+							||	('Webkit' + up) in e
+							||	('O' + up) in e
+							||	('ms' + up) in e
+					);
+
+				},
 
 				/**
 				 * Gets the base font size (in px).
@@ -2157,34 +2186,14 @@ skel.registerPlugin('layers', (function($) {
 								if (typeof _.config.mode == 'function')
 									_.config.mode = (_.config.mode)();
 
-							// Temporary kludge!
-								var	canUse_transform = !(
-
-										// Unsupported platform?
-											((_._.vars.deviceType == 'android' && _._.vars.deviceVersion < 4) || _._.vars.deviceType == 'wp')
-										||
-										// IE < 10?
-											(_._.vars.IEVersion < 10)
-
-									),
-									canUse_transition = !(
-
-										// IE < 10?
-											(_._.vars.IEVersion < 10)
-										||
-										// Unsupported platform?
-											(_._.vars.deviceType == 'wp')
-
-									);
-
-							// Can't transform? Fall back on position.
+							// Feature detection for 'transform'.
 								if (_.config.mode == 'transform'
-								&&	!canUse_transform)
+								&&	(!_.canUseProperty('transform') || !_.canUseProperty('transition')))
 									_.config.mode = 'position';
 
-							// Can't position? Fall back on animate.
+							// Feature detection for 'position'.
 								if (_.config.mode == 'position'
-								&&	!canUse_transition)
+								&&	!_.canUseProperty('transition'))
 									_.config.mode = 'animate';
 
 					// Set window.
