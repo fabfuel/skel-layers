@@ -291,44 +291,41 @@ skel.registerPlugin('layers', (function($) {
 				};
 
 			// Link element to states/breakpoints (or just attach it).
-				_._.DOMReady(function() {
 
-					// Linked to states?
-						if (_this.config.states
-						&&	_this.config.states != _._.sd) {
+				// Linked to states?
+					if (_this.config.states
+					&&	_this.config.states != _._.sd) {
 
-							// Cache element.
-								_._.cacheElement(x);
+						// Cache element.
+							_._.cacheElement(x);
 
-							// Add to states.
-								a = _._.getArray(_this.config.states);
+						// Add to states.
+							a = _._.getArray(_this.config.states);
 
-								_._.iterate(a, function(i) {
-									_._.addCachedElementToState(a[i], x);
-								});
+							_._.iterate(a, function(i) {
+								_._.addCachedElementToState(a[i], x);
+							});
 
-						}
+					}
 
-					// Linked to breakpoints?
-						else if (_this.config.breakpoints) {
+				// Linked to breakpoints?
+					else if (_this.config.breakpoints) {
 
-							// Cache element.
-								_._.cacheElement(x);
+						// Cache element.
+							_._.cacheElement(x);
 
-							// Add to breakpoints.
-								a = _._.getArray(_this.config.breakpoints);
+						// Add to breakpoints.
+							a = _._.getArray(_this.config.breakpoints);
 
-								_._.iterate(a, function(i) {
-									_._.addCachedElementToBreakpoint(a[i], x);
-								});
+							_._.iterate(a, function(i) {
+								_._.addCachedElementToBreakpoint(a[i], x);
+							});
 
-						}
+					}
 
-					// Not linked to either? Just attach it.
-						else
-							_._.attachElement(x);
-
-				});
+				// Not linked to either? Just attach it.
+					else
+						_._.attachElement(x);
 
 		}
 
@@ -1648,9 +1645,7 @@ skel.registerPlugin('layers', (function($) {
 				 * @param {string} id Layer ID.
 				 */
 				hide: function(id) {
-					_._.DOMReady(function() {
-						_.cache.layers[id].hide();
-					});
+					_.cache.layers[id].hide();
 				},
 
 				/**
@@ -1658,9 +1653,7 @@ skel.registerPlugin('layers', (function($) {
 				 * @param {string} id Layer ID.
 				 */
 				show: function(id) {
-					_._.DOMReady(function() {
-						_.cache.layers[id].show();
-					});
+					_.cache.layers[id].show();
 				},
 
 				/**
@@ -1668,16 +1661,14 @@ skel.registerPlugin('layers', (function($) {
 				 * @param {string} id Layer ID.
 				 */
 				toggle: function(id) {
-					_._.DOMReady(function() {
 
-						var layer = _.cache.layers[id];
+					var layer = _.cache.layers[id];
 
-						if (layer.isVisible())
-							layer.hide();
-						else
-							layer.show();
+					if (layer.isVisible())
+						layer.hide();
+					else
+						layer.show();
 
-					});
 				},
 
 			/* Main */
@@ -2201,28 +2192,27 @@ skel.registerPlugin('layers', (function($) {
 					// Set window.
 						_.cache.window = $(window);
 
-					// Initialize animation, objects.
-						_.initAnimation();
-						_.initObjects();
+					$(function() {
 
-					// Initialize wrappers.
-						if (_.config.wrap)
-							_.initWrappers();
+						// Initialize animation, objects.
+							_.initAnimation();
+							_.initObjects();
 
-					// Final initialization stuff.
-						_._.DOMReady(function() {
+						// Initialize wrappers.
+							if (_.config.wrap)
+								_.initWrappers();
 
-							// Initialize layers, includes.
-								_.initLayers();
-								_.initIncludes();
+						// Initialize layers, includes.
+							_.initLayers();
+							_.initIncludes();
 
-							// Force a state update.
-								_._.updateState();
+						// Force a state update.
+							_._.updateState();
 
-							// Refresh
-								_.refresh();
+						// Refresh
+							_.refresh();
 
-						});
+					});
 
 				},
 
@@ -2253,8 +2243,6 @@ skel.registerPlugin('layers', (function($) {
 				 */
 				initObjects: function() {
 
-					_._.DOMReady(function() {
-
 					// document.
 						_.cache.document = $(document);
 
@@ -2266,8 +2254,6 @@ skel.registerPlugin('layers', (function($) {
 
 					// htmlbody
 						_.cache.htmlbody = $('html,body');
-
-					});
 
 				},
 
@@ -2675,8 +2661,6 @@ skel.registerPlugin('layers', (function($) {
 				 */
 				initWrappers: function() {
 
-					_._.DOMReady(function() {
-
 					// parent.
 						if (_.config.mode != 'transform') {
 
@@ -2720,8 +2704,6 @@ skel.registerPlugin('layers', (function($) {
 
 					// Hack: "autofocus" attribute stops working on webkit when we wrap stuff, so go ahead and force focus here.
 						$('[autofocus]').focus();
-
-					});
 
 				}
 
