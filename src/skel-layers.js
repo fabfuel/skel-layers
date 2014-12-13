@@ -221,6 +221,7 @@ skel.registerPlugin('layers', (function($) {
 
 			this.id = id;
 			this.index = index;
+			this.events = {};
 
 			// Config.
 				this.config = {
@@ -370,6 +371,10 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart, showend event.
+							layer.trigger('showstart');
+							layer.trigger('showend');
+
 					},
 					hide: function(layer) {
 
@@ -388,6 +393,10 @@ skel.registerPlugin('layers', (function($) {
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
+
+						// Trigger hidestart, hideend event.
+							layer.trigger('hidestart');
+							layer.trigger('hideend');
 
 					}
 				},
@@ -419,9 +428,17 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Fade in.
 							window.setTimeout(function() {
-								$le._skel_layers_fadeIn();
+								$le._skel_layers_fadeIn(function() {
+
+									// Trigger showend event.
+										layer.trigger('showend');
+
+								});
 							}, 50);
 
 					},
@@ -432,6 +449,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Fade out.
 							$le._skel_layers_fadeOut(function() {
@@ -445,6 +465,9 @@ skel.registerPlugin('layers', (function($) {
 
 								// Revert layer element.
 									$le._skel_layers_demote().hide();
+
+								// Trigger hideend event.
+									layer.trigger('hideend');
 
 							});
 
@@ -478,9 +501,19 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Animate.
 							window.setTimeout(function() {
+
 								$le._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
+
+								// Trigger showend event.
+									window.setTimeout(function() {
+										layer.trigger('showend');
+									}, _.config.speed);
+
 							}, 50);
 
 					},
@@ -491,6 +524,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Animate.
 							$le._skel_layers_translateOrigin();
@@ -506,6 +542,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
+
+						// Trigger hideend event.
+							layer.trigger('hideend');
 
 						}, _.config.speed + 50);
 
@@ -539,9 +578,19 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Animate.
 							window.setTimeout(function() {
+
 								$le._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcW(config._height));
+
+								// Trigger showend event.
+									window.setTimeout(function() {
+										layer.trigger('showend');
+									}, _.config.speed);
+
 							}, 50);
 
 					},
@@ -552,6 +601,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Animate.
 							$le._skel_layers_translateOrigin();
@@ -567,6 +619,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
+
+						// Trigger hideend event.
+							layer.trigger('hideend');
 
 						}, _.config.speed + 50);
 
@@ -603,9 +658,19 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Animate.
 							window.setTimeout(function() {
+
 								$le.add($w)._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
+
+								// Trigger showend event.
+									window.setTimeout(function() {
+										layer.trigger('showend');
+									}, _.config.speed);
+
 							}, 50);
 
 					},
@@ -617,6 +682,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Animate.
 							$le.add($w)._skel_layers_translateOrigin();
@@ -635,6 +703,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Revert wrappers.
 							$w._skel_layers_demote();
+
+						// Trigger hideend event.
+							layer.trigger('hideend');
 
 						}, _.config.speed + 50);
 
@@ -668,9 +739,19 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Animate.
 							window.setTimeout(function() {
+
 								$le.add($w)._skel_layers_translate(0, (config.side == 'bottom' ? '-' : '') + _.recalcH(config._height));
+
+								// Trigger showend event.
+									window.setTimeout(function() {
+										layer.trigger('showend');
+									}, _.config.speed);
+
 							}, 50);
 
 					},
@@ -682,6 +763,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Animate.
 							$le.add($w)._skel_layers_translateOrigin();
@@ -698,6 +782,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
+
+						// Trigger hideend event.
+							layer.trigger('hideend');
 
 						}, _.config.speed + 50);
 
@@ -733,9 +820,19 @@ skel.registerPlugin('layers', (function($) {
 						// Layer => Visible wrapper.
 							layer.moveToVisibleWrapper();
 
+						// Trigger showstart event.
+							layer.trigger('showstart');
+
 						// Animate.
 							window.setTimeout(function() {
+
 								$w._skel_layers_translate((config.side == 'right' ? '-' : '') + _.recalcW(config._width), 0);
+
+								// Trigger showend event.
+									window.setTimeout(function() {
+										layer.trigger('showend');
+									}, _.config.speed);
+
 							}, 50);
 
 					},
@@ -747,6 +844,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Defocus layer element.
 							$le.find('*').trigger('blur', [true]);
+
+						// Trigger hidestart event.
+							layer.trigger('hidestart');
 
 						// Animate.
 							$w._skel_layers_translateOrigin();
@@ -765,6 +865,9 @@ skel.registerPlugin('layers', (function($) {
 
 						// Layer => Hidden wrapper.
 							layer.moveToHiddenWrapper();
+
+						// Trigger hideend event.
+							layer.trigger('hideend');
 
 						}, _.config.speed + 50);
 
@@ -854,6 +957,37 @@ skel.registerPlugin('layers', (function($) {
 		/******************************/
 		/* Methods                    */
 		/******************************/
+
+			/**
+			 * Registers an event.
+			 * @param {string} name Name.
+			 * @param {function} f Function.
+			 */
+			Layer.prototype.on = function(name, f) {
+
+				if (!this.events[name])
+					this.events[name] = [];
+
+				this.events[name].push(f);
+
+			};
+
+			/**
+			 * Triggers an event.
+			 * @param {string} name Name.
+			 */
+			Layer.prototype.trigger = function(name) {
+
+				if (!this.events[name] || this.events[name].length == 0)
+					return;
+
+				var k, _this = this;
+
+				_._.iterate(this.events[name], function(k) {
+					(_this.events[name][k])();
+				});
+
+			};
 
 			/**
 			 * Shows the layer.
@@ -992,6 +1126,9 @@ skel.registerPlugin('layers', (function($) {
 				// Mark as visible.
 					this.visible = true;
 
+				// Trigger show event.
+					this.trigger('show');
+
 			};
 
 			/**
@@ -1026,6 +1163,9 @@ skel.registerPlugin('layers', (function($) {
 						_.cache.exclusiveLayer = null;
 
 					}
+
+				// Trigger hide event.
+					this.trigger('hide');
 
 				this.visible = false;
 
