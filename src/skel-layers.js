@@ -1199,11 +1199,17 @@ skel.registerPlugin('layers', (function($) {
 						switch (config.orientation) {
 
 							case 'vertical':
-								$le.css('overflow-y', 'auto');
+								$le
+									.css('overflow-y', 'auto')
+									.css('overflow-x', 'hidden');
+
 								break;
 
 							case 'horizontal':
-								$le.css('overflow-x', 'auto');
+								$le
+									.css('overflow-x', 'auto')
+									.css('overflow-y', 'hidden');
+
 								break;
 
 							case 'none':
