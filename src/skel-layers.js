@@ -2153,11 +2153,6 @@ skel.registerPlugin('layers', (function($) {
 
 						// Determine mode.
 
-							// (deprecated) transform, transformTest.
-								if (_.config.transform
-								||	_.config.transformTest && _.config.transformTest())
-									_.config.mode = 'transform';
-
 							// Function? Call it.
 								if (typeof _.config.mode == 'function')
 									_.config.mode = (_.config.mode)();
@@ -2170,9 +2165,6 @@ skel.registerPlugin('layers', (function($) {
 										||
 										// IE < 10?
 											(_._.vars.IEVersion < 10)
-										||
-										// (deprecated) Transform breakpoints have been specified but none are active?
-											(_.config.transformBreakpoints && !_._.hasActive(_._.getArray(_.config.transformBreakpoints)))
 
 									),
 									canUse_transition = !(
