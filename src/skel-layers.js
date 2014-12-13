@@ -2188,9 +2188,6 @@ skel.registerPlugin('layers', (function($) {
 						// Force a state update.
 							_._.updateState();
 
-						// Refresh
-							_.refresh();
-
 					});
 
 				},
@@ -2683,6 +2680,9 @@ skel.registerPlugin('layers', (function($) {
 
 					// Hack: "autofocus" attribute stops working on webkit when we wrap stuff, so go ahead and force focus here.
 						$('[autofocus]').focus();
+
+					// Refresh
+						_.refresh();
 
 				}
 
