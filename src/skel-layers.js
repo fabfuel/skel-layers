@@ -1112,8 +1112,8 @@ skel.registerPlugin('layers', (function($) {
 				// Show it.
 					this.animations[animation].show(this);
 
-				// If this isn't a visible layer and it's exclusive, make it the exclusive layer.
-					if (config.hidden && config.exclusive) {
+				// Exclusive layer?
+					if (config.exclusive) {
 
 						_.cache.body.addClass('skel-layers-exclusiveVisible');
 						_.cache.exclusiveLayer = this;
@@ -1152,8 +1152,8 @@ skel.registerPlugin('layers', (function($) {
 
 					this.animations[animation].hide(this);
 
-				// If this is a hidden layer and it's exclusive, make it the exclusive layer.
-					if (config.hidden && config.exclusive
+				// Current exclusive layer?
+					if (config.exclusive
 					&&	_.cache.exclusiveLayer === this) {
 
 						_.cache.body.removeClass('skel-layers-exclusiveVisible');
