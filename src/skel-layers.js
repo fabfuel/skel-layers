@@ -2077,19 +2077,15 @@ skel.registerPlugin('layers', (function($) {
 
 					var x;
 
-					if (_.config.mode == 'transform') {
+					// Move elements with the "skel-layers-fixed" class to visibleWrapper.
+						if (target)
+							x = target.filter('.skel-layers-fixed:not(.skel-layers-moved)');
+						else
+							x = $('.skel-layers-fixed:not(.skel-layers-moved)');
 
-						// Move elements with the "skel-layers-fixed" class to visibleWrapper.
-							if (target)
-								x = target.filter('.skel-layers-fixed:not(.skel-layers-moved)');
-							else
-								x = $('.skel-layers-fixed:not(.skel-layers-moved)');
-
-							x
-								._skel_layers_init()
-								.appendTo(_.cache.visibleWrapper);
-
-					}
+						x
+							._skel_layers_init(true)
+							.appendTo(_.cache.visibleWrapper);
 
 				},
 
@@ -2375,8 +2371,8 @@ skel.registerPlugin('layers', (function($) {
 									 * Initializes the element for animation
 									 * @return {jQuery} Element.
 									 */
-									$.fn._skel_layers_init = function() {
-										return $(this).css('position', 'absolute');
+									$.fn._skel_layers_init = function(fixed) {
+										return $(this).css('position', (fixed ? 'fixed' : 'absolute'));
 									};
 
 								}
@@ -2418,7 +2414,7 @@ skel.registerPlugin('layers', (function($) {
 									 * Initializes the element for animation
 									 * @return {jQuery} Element.
 									 */
-									$.fn._skel_layers_init = function() {
+									$.fn._skel_layers_init = function(fixed) {
 
 										return $(this)
 											.css('transition',	'top ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
@@ -2426,7 +2422,7 @@ skel.registerPlugin('layers', (function($) {
 																'bottom ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
 																'left ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
 																'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
-											.css('position', 'absolute');
+											.css('position', (fixed ? 'fixed' : 'absolute'));
 
 									};
 
