@@ -1629,6 +1629,21 @@ skel.registerPlugin('layers', (function($) {
 				},
 
 				/**
+				 * Gets a layer.
+				 * @param {string} id Layer ID.
+				 * @return {Layer} Layer.
+				 */
+				get: function(id) {
+
+					// Doesn't exist? Bail.
+						if (!(id in _.cache.layers))
+							return;
+
+					return _.cache.layers[id];
+
+				},
+
+				/**
 				 * Hides a layer.
 				 * @param {string} id Layer ID.
 				 */
