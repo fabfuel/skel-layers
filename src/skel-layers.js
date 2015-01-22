@@ -204,6 +204,68 @@ skel.registerPlugin('layers', (function($) {
 
 		};
 
+		/**
+		 * Disables CSS added by Layers.
+		 */
+		$.fn._skel_layers_uncss = function() {
+
+			var $this = $(this),
+				properties = $this.data('skel-layers-css'),
+				values = {};
+
+			// No properties *or* already uncss'd? Bail.
+				if (!properties
+				||	$this.data('skel-layers-css-values'))
+					return $this;
+
+			// Step through properties.
+				skel.iterate(properties, function(k) {
+
+					var x = $this.css(properties[k]);
+
+					// Property set?
+						if (x) {
+
+							// Store its value.
+								values[properties[k]] = x;
+
+							// Clear property.
+								$this.css(properties[k], '');
+
+						}
+
+				});
+
+			// Store values.
+				$this.data('skel-layers-css-values', values);
+
+		};
+
+		/**
+		 * Re-enables CSS added by Layers.
+		 */
+		$.fn._skel_layers_recss = function() {
+
+			var $this = $(this),
+				values = $this.data('skel-layers-css-values');
+
+			// Not uncss'd? Bail.
+				if (!values)
+					return $this;
+
+			// Step through values.
+				skel.iterate(values, function(property) {
+
+					// Set property.
+						$this.css(property, values[property]);
+
+				});
+
+			// Clear values.
+				$this.removeData('skel-layers-css-values');
+
+		};
+
 	/**************************************************************************/
 	/* Layer Class                                                            */
 	/**************************************************************************/
@@ -1876,11 +1938,18 @@ skel.registerPlugin('layers', (function($) {
 
 									var t = $(this);
 
+									// Already moved? Bail.
+										if (t.hasClass('skel-layers-moved'))
+											return;
+
 									// Move child element.
 										x.append(t);
 
 									// Mark as moved.
 										t.addClass('skel-layers-moved');
+
+									// Uncss.
+										t._skel_layers_uncss();
 
 								});
 							};
@@ -1890,6 +1959,10 @@ skel.registerPlugin('layers', (function($) {
 
 									var t = $(this);
 
+									// Not moved? Bail.
+										if (!t.hasClass('skel-layers-moved'))
+											return;
+
 									// Move child element back.
 										arg1.append(t);
 
@@ -1898,6 +1971,9 @@ skel.registerPlugin('layers', (function($) {
 
 									// Refresh.
 										_.refresh(t);
+
+									// Recss.
+										t._skel_layers_recss();
 
 								});
 							};
@@ -1916,6 +1992,10 @@ skel.registerPlugin('layers', (function($) {
 
 							o._skel_layers_resume = function() {
 
+								// Already moved? Bail.
+									if (arg1.hasClass('skel-layers-moved'))
+										return;
+
 								// Insert placeholder before arg1.
 									$('<div id="skel-layers-placeholder-' + arg1.attr('id') + '" />').insertBefore(arg1);
 
@@ -1925,9 +2005,16 @@ skel.registerPlugin('layers', (function($) {
 								// Mark arg1 as moved.
 									arg1.addClass('skel-layers-moved');
 
+								// Uncss arg1.
+									arg1._skel_layers_uncss();
+
 							};
 
 							o._skel_layers_suspend = function() {
+
+								// Not moved? Bail.
+									if (!arg1.hasClass('skel-layers-moved'))
+										return;
 
 								// Replace placeholder with arg1.
 									$('#skel-layers-placeholder-' + arg1.attr('id')).replaceWith(arg1);
@@ -1937,6 +2024,9 @@ skel.registerPlugin('layers', (function($) {
 
 								// Refresh arg1.
 									_.refresh(arg1);
+
+								// Recss arg1.
+									arg1._skel_layers_recss();
 
 							};
 
@@ -2307,7 +2397,12 @@ skel.registerPlugin('layers', (function($) {
 										.css('backface-visibility', 'hidden')
 										.css('perspective', '500')
 										._skel_layers_xcss('transition',	'transform ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
-																			'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing);
+																			'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
+										.data('skel-layers-css', [
+											'backface-visibility',
+											'perspective',
+											'-moz-transition', '-webkit-transition', '-o-transition', '-ms-transition', 'transition'
+										]);
 
 							};
 
@@ -2369,7 +2464,13 @@ skel.registerPlugin('layers', (function($) {
 									 * @return {jQuery} Element.
 									 */
 									$.fn._skel_layers_init = function(fixed) {
-										return $(this).css('position', (fixed ? 'fixed' : 'absolute'));
+
+										return $(this)
+											.css('position', (fixed ? 'fixed' : 'absolute'))
+											.data('skel-layers-css', [
+												'position'
+											]);
+
 									};
 
 								}
@@ -2419,7 +2520,11 @@ skel.registerPlugin('layers', (function($) {
 																'bottom ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
 																'left ' + (_.config.speed / 1000.00) + 's ' + _.config.easing + ',' +
 																'opacity ' + (_.config.speed / 1000.00) + 's ' + _.config.easing)
-											.css('position', (fixed ? 'fixed' : 'absolute'));
+											.css('position', (fixed ? 'fixed' : 'absolute'))
+											.data('skel-layers-css', [
+												'-moz-transition', '-webkit-transition', '-o-transition', '-ms-transition', 'transition',
+												'position'
+											]);
 
 									};
 
