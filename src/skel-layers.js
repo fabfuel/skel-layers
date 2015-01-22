@@ -1091,10 +1091,27 @@ skel.registerPlugin('layers', (function($) {
 						if (config._height == 'auto')
 							config._height = $le.outerHeight() + 1;
 
+					// Handle max width/height.
+						if (config.maxWidth != '100%'
+						||	config.width == 'auto') {
+
+							config._width = _.recalcW(config._width);
+							config._maxWidth = _.recalcW(_._.useActive(config.maxWidth));
+							config._width = Math.min(config._width, config._maxWidth);
+
+						}
+
+						if (config.maxHeight != '100%'
+						||	config.height == 'auto') {
+
+							config._height = _.recalcH(config._height);
+							config._maxHeight = _.recalcH(_._.useActive(config.maxHeight));
+							config._height = Math.min(config._height, config._maxHeight);
+
+						}
+
 				// Apply active size.
 					$le
-						.css('max-width', _._.useActive(config.maxWidth))
-						.css('max-height', _._.useActive(config.maxHeight))
 						.css('width', config._width)
 						.css('height', config._height);
 
