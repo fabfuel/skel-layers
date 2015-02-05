@@ -1587,12 +1587,6 @@ skel.registerPlugin('layers', (function($) {
 			},
 
 			/**
-			 * Event type.
-			 * @type {string}
-			 */
-			eventType: 'click touchend',
-
-			/**
 			 * Layer index.
 			 * @type {integer}
 			 */
@@ -1863,29 +1857,46 @@ skel.registerPlugin('layers', (function($) {
 
 							x
 								.css('-webkit-tap-highlight-color', 'rgba(0,0,0,0)')
-								.css('cursor', 'pointer');
+								.css('cursor', 'pointer')
+								.on('touchend click', function(event) {
 
-							a = function(e) {
-								e.preventDefault();
-								e.stopPropagation();
+									var $this = $(this);
 
-								if (_.cache.exclusiveLayer) {
+									// Prevent default/propagation.
+										event.preventDefault();
+										event.stopPropagation();
 
-									_.cache.exclusiveLayer.hide();
-									return false;
+									// Prevent handler from firing twice.
 
-								}
+										// Already handled? Bail.
+											if ($this.data('handled') === true)
+												return;
 
-								var t = $(this), layer = _.cache.layers[args[0]];
+										// Mark as handled.
+											$this.data('handled', true);
 
-								if (layer.isVisible())
-									layer.hide();
-								else
-									layer.show();
+										// Clear handled marker in 500ms.
+											window.setTimeout(function() {
+												$this.removeData('handled');
+											}, 500);
 
-							};
+									// Exclusive visible? Hide it and bail.
+										if (_.cache.exclusiveLayer) {
 
-							x.on(_.eventType, a);
+											_.cache.exclusiveLayer.hide();
+											return false;
+
+										}
+
+									// Toggle layer.
+										var layer = _.cache.layers[args[0]];
+
+										if (layer.isVisible())
+											layer.hide();
+										else
+											layer.show();
+
+								});
 
 							break;
 
