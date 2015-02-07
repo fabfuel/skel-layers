@@ -1,4 +1,4 @@
-/* skel-layers.js v2.0.2-dev | (c) n33 | getskel.com | MIT licensed */
+/* skel-layers.js v2.0.2 | (c) n33 | getskel.com | MIT licensed */
 
 /*
 
@@ -1869,15 +1869,15 @@ skel.registerPlugin('layers', (function($) {
 									// Prevent handler from firing twice.
 
 										// Already handled? Bail.
-											if ($this.data('handled') === true)
+											if ($this.data('skel-layers-handled') === true)
 												return;
 
 										// Mark as handled.
-											$this.data('handled', true);
+											$this.data('skel-layers-handled', true);
 
 										// Clear handled marker in 500ms.
 											window.setTimeout(function() {
-												$this.removeData('handled');
+												$this.removeData('skel-layers-handled');
 											}, 500);
 
 									// Exclusive visible? Hide it and bail.
