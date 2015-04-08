@@ -304,7 +304,8 @@ skel.registerPlugin('layers', (function($) {
 					resetScroll: true,
 					resetForms: true,
 					swipeToHide: true,
-					clickToHide: false
+					clickToHide: false,
+					moveToHiddenWrapper: true
 				};
 				_._.extend(this.config, config);
 
@@ -428,7 +429,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('x');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart, showend event.
 							layer.trigger('showstart');
@@ -448,7 +450,8 @@ skel.registerPlugin('layers', (function($) {
 								_.unlockView('x');
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
@@ -485,7 +488,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('x');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -520,7 +524,8 @@ skel.registerPlugin('layers', (function($) {
 										_.unlockView('x');
 
 								// Layer => Hidden wrapper.
-									layer.moveToHiddenWrapper();
+                                    if (config.moveToHiddenWrapper)
+    	        						layer.moveToHiddenWrapper();
 
 								// Revert layer element.
 									$le._skel_layers_demote().hide();
@@ -558,7 +563,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('x');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -597,7 +603,8 @@ skel.registerPlugin('layers', (function($) {
 								_.unlockView('x');
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
@@ -635,7 +642,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('y');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -674,7 +682,8 @@ skel.registerPlugin('layers', (function($) {
 								_.unlockView('y');
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Revert layer element.
 							$le._skel_layers_demote().hide();
@@ -715,7 +724,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('x');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -758,7 +768,8 @@ skel.registerPlugin('layers', (function($) {
 							$le.hide();
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Revert wrappers.
 							$w._skel_layers_demote();
@@ -796,7 +807,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('y');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -840,7 +852,8 @@ skel.registerPlugin('layers', (function($) {
 								.hide();
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Trigger hideend event.
 							layer.trigger('hideend');
@@ -877,7 +890,8 @@ skel.registerPlugin('layers', (function($) {
 								_.lockView('x');
 
 						// Layer => Visible wrapper.
-							layer.moveToVisibleWrapper();
+                            if (config.moveToHiddenWrapper)
+							    layer.moveToVisibleWrapper();
 
 						// Trigger showstart event.
 							layer.trigger('showstart');
@@ -923,7 +937,8 @@ skel.registerPlugin('layers', (function($) {
 							$w._skel_layers_demote();
 
 						// Layer => Hidden wrapper.
-							layer.moveToHiddenWrapper();
+                            if (config.moveToHiddenWrapper)
+    							layer.moveToHiddenWrapper();
 
 						// Trigger hideend event.
 							layer.trigger('hideend');
